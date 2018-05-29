@@ -224,7 +224,7 @@ class _MainPageState extends State<MainPage> {
                           children: <Widget>[
                             Image.asset('assets/dolar.png'),
                             Text(
-                              'Oferte promotionale',
+                              'De construit',
                               textAlign: TextAlign.center,
                             ),
                           ],
