@@ -106,7 +106,7 @@ class _MainPageState extends State<MainPage> {
       print(value['name']);
       double _price = 0.0;
       if (value['final_price_with_tax'] != null)
-        _price = value['final_price_with_tax'];
+        _price = value['final_price_with_tax'].toDouble();
 
       var item = new Info(
         id: int.parse(value['entity_id']),
@@ -250,24 +250,9 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
             ),
-            new Text(
-              'You have pushed the button this many times:',
-            ),
-            new Text(
-              '$_counter',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .display1,
-            ),
           ],
         ),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: new Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
