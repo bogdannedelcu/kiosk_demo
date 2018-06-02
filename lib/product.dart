@@ -38,7 +38,7 @@ class ProductItem extends StatefulWidget {
     var data;
     final String url = 'https://www.handsoneducation.ro/api/rest/products/';
     var httpClient = new HttpClient();
-    //   httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.108:8888;";
+//       httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
     httpClient.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     try {
@@ -74,7 +74,6 @@ class ProductItem extends StatefulWidget {
     return prod;
   }
 
-
   _launchProduct(context, int id) {
     print(id);
     Navigator.push(
@@ -89,14 +88,12 @@ class ProductItem extends StatefulWidget {
 }
 
 class ProductItemState extends State<ProductItem> {
-
   var _expanded = false;
   ProductInfo values = null;
 
   @override
   Widget build(BuildContext context) {
-
-    if (values == null){
+    if (values == null) {
       var futureBuilder = new FutureBuilder(
         future: widget._getData(widget._id),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -121,9 +118,7 @@ class ProductItemState extends State<ProductItem> {
         ),
         body: futureBuilder,
       );
-
-    }
-    else {
+    } else {
       return new Scaffold(
         backgroundColor: Colors.white,
         appBar: new AppBar(
@@ -133,12 +128,7 @@ class ProductItemState extends State<ProductItem> {
         ),
         body: createWidget(context, values),
       );
-
-
     }
-
-
-
   }
 
   Widget createWidget(BuildContext context, ProductInfo snapshot) {
@@ -224,7 +214,7 @@ class ProductItemState extends State<ProductItem> {
             children: <Widget>[
               new Expanded(
                 child: new Container(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: new FlatButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {},
@@ -249,58 +239,71 @@ class ProductItemState extends State<ProductItem> {
               ),
             ],
           ),
-          new Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                new Flexible(
-                  child: new GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _expanded = !_expanded;
-                      });
-                    },
-                    child: new Text(
-                      values.description
-                          .replaceAll('<p>', '')
-                          .replaceAll('</p>', ''),
+          new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              new Flexible(
+                child: new GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _expanded = !_expanded;
+                    });
+                  },
+                  child: new Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 4.0),
+                    child: new Text.rich(
+                      new TextSpan(
+                        text: values.description
+                            .replaceAll('<p>', '')
+                            .replaceAll('</p>', '')
+                            .replaceAll('\r', '')
+                            .replaceAll('\t', '')
+                            .replaceAll('&nbsp;', ' ')
+                            .replaceAll('\n', ''),
+                      ),
                       textAlign: TextAlign.justify,
-                      maxLines: _expanded ? 100: 6,
+                      maxLines: _expanded ? 100 : 6,
                       overflow: TextOverflow.ellipsis,
+                      softWrap: true,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           new Row(
             children: <Widget>[
-              new Flexible(
+              new Expanded(
                   child: new Divider(
-                    color: Colors.black12,
-                    height: 2.0,
-                  ))
+                color: Colors.black12,
+                height: 2.0,
+              ))
             ],
           ),
           new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Text('Produse vizualizare recent',
                 style:
-                new TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
+                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
           ),
           new Container(
-              height: 180.0,
+              height: 190.0,
               child: new ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount:
-                  LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
+                      LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
                   itemBuilder: LastSeen.queue.isEmpty
                       ? (BuildContext context, int i) => new Text('empry')
                       : (BuildContext context, int i) => new GestureDetector(
-                      onTap: () => _launchProduct(context, LastSeen.queue.elementAt(i).id),
-                      child:
-                      new ProductCard(LastSeen.queue.elementAt(i))))),
+                          onTap: () => _launchProduct(
+                              context, LastSeen.queue.elementAt(i).id),
+                          child:
+                              new ProductCard(LastSeen.queue.elementAt(i))))),
+        new Container(
+          height: 20.0,
+        )
         ],
       ),
     );
@@ -313,7 +316,6 @@ class ProductItemState extends State<ProductItem> {
       new MaterialPageRoute(builder: (context) => new ProductItem(id)),
     );
   }
-
 }
 
 int _priceIntreg(double price) {
@@ -336,33 +338,35 @@ class ProductCard extends StatefulWidget {
 }
 
 class ProductCardState extends State<ProductCard> {
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return new Card(
       elevation: 8.0,
       child: new Container(
-        height: 170.0,
-        width: 120.0,
+        height: 180.0,
+        width: 140.0,
         child: new Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            new Container(
-              height: 120.0,
-              width: 120.0,
-              child: new Image.network(
-                widget._info.image,
-                width: 120.0,
-                fit: BoxFit.contain,
+            new Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+              child: new Container(
+                height: 114.0,
+                width: 116.0,
+                child: new Image.network(
+                  widget._info.image,
+                  width: 120.0,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             new Container(
-                height: 30.0,
-                width: 120.0,
+                height: 32.0,
+                width: 130.0,
                 child: new Text(
                   widget._info.name,
-                  style: new TextStyle(fontSize: 10.0),
+                  style: new TextStyle(fontSize: 12.0),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   maxLines: 2,
@@ -396,13 +400,16 @@ class ProductCardState extends State<ProductCard> {
                           ),
                         ],
                       ),
-                      new Text(
-                        ' Lei',
-                        style: new TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.right,
+                      new Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: new Text(
+                          ' Lei',
+                          style: new TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.right,
+                        ),
                       ),
                     ],
                   ),

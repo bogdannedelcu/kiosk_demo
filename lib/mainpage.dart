@@ -186,7 +186,7 @@ class _MainPageState extends State<MainPage> {
                   new Flexible(
                     flex: 1,
                     child: new MaterialButton(
-                      height: 80.0,
+                      height: 60.0,
                       onPressed: () {
                         goToCategory(94);
                       },
@@ -196,9 +196,12 @@ class _MainPageState extends State<MainPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Image.asset('assets/vandute.png'),
-                          Text(
-                            'Cele mai vandute',
-                            textAlign: TextAlign.center,
+                          new Padding(
+                            padding: const EdgeInsets.symmetric(vertical:4.0),
+                            child: Text(
+                              'Cele mai vandute',
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ],
                       ),
@@ -207,7 +210,7 @@ class _MainPageState extends State<MainPage> {
                   new Flexible(
                     flex: 1,
                     child: new MaterialButton(
-                        height: 80.0,
+                        height: 60.0,
                         onPressed: () {
                           goToCategory(97);
                         },
@@ -224,7 +227,7 @@ class _MainPageState extends State<MainPage> {
                   new Flexible(
                     flex: 1,
                     child: new MaterialButton(
-                        height: 80.0,
+                        height: 60.0,
                         onPressed: () {
                           goToCategory(108);
                         },

@@ -45,7 +45,7 @@ class CategoryItem extends StatelessWidget {
               children: <Widget>[
                 new Container(
                   child: new Container(
-                    height: 120.0,
+                    height: 110.0,
                     width: 160.0,
                     child: new Image.network(_info.image),
                   ),
@@ -57,7 +57,7 @@ class CategoryItem extends StatelessWidget {
                       new Flexible(
                         child: new Text(
                           _info.name,
-                          style: TextStyle(fontStyle: FontStyle.italic),
+                          style: TextStyle(fontStyle: FontStyle.normal),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -65,47 +65,50 @@ class CategoryItem extends StatelessWidget {
                   ),
                 ),
                 new Expanded(
-                    child: new Column(
+                    child: new Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    new Center(
-                      child: new Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          new Text(
-                            _priceIntreg(_info.price).toString(),
-                            style: new TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right,
-                          ),
-                          new Column(
-                            children: <Widget>[
-                              new Text(
-                                _priceDecimals(_info.price).toString(),
-                                style: new TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.right,
-                              ),
-                            ],
-                          ),
-                          new Text(
-                            ' Lei',
-                            style: new TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
+                      new Center(
+                        child: new Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            new Text(
+                              _priceIntreg(_info.price).toString(),
+                              style: new TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.right,
+                            ),
+                            new Column(
+                              children: <Widget>[
+                                new Text(
+                                  _priceDecimals(_info.price).toString(),
+                                  style: new TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                            new Text(
+                              ' Lei',
+                              style: new TextStyle(
+                                  fontSize: 16.0,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.right,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
-                )),
+                ),
+                    )),
               ],
             ),
           ),
@@ -135,6 +138,7 @@ class CategoryPage extends StatelessWidget {
         ),
         body: new Center(
             child: new GridView.count(
+
           crossAxisCount: 2,
           children: _buildItems(),
         )));
