@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "873665672928",
+    "firebase_url": "https://kiosk-916cb.firebaseio.com",
+    "project_id": "kiosk-916cb",
+    "storage_bucket": "kiosk-916cb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873665672928:android:47d5aef64b145bc8",
+        "android_client_info": {
+          "package_name": "ro.handsoneducation.kiosk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873665672928-kf0end4gjar7r69niveur61fesnpe7vl.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "873665672928-kf0end4gjar7r69niveur61fesnpe7vl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL-LHu0NX2utjHnJYXe28m1CrTYfXQ7rQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

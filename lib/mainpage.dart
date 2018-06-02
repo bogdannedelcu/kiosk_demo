@@ -5,6 +5,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:kiosk/cart.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({Key key, this.title}) : super(key: key);
@@ -56,22 +58,19 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future pickImage() async {
-    /*
-    var image = new Image.network(
-        'https://reges.inspectiamuncii.ro/DefaultCaptcha/Generate?t=');
 
-    setState(() {
-      _image = image;
-    });
-    */
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new CartPage()),
+    );
 
 
-
-        }
+//    var coll = await Firestore.instance.collection('cart').document('userId').get();
+//    print(coll['name']);
+  }
 
 
   goToCategory(int i) async {
-
     //var url = "https://www.handsoneducation.ro/api/rest/products";
     var data;
     final String url = 'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
@@ -100,8 +99,7 @@ class _MainPageState extends State<MainPage> {
     }
     var emptyList2 = List<Info>();
 
-    data.forEach((key, value)  {
-
+    data.forEach((key, value) {
       print(key);
       print(value['name']);
       double _price = 0.0;
@@ -116,20 +114,13 @@ class _MainPageState extends State<MainPage> {
         price: _price,
       );
       emptyList2.add(item);
-
-
     });
-
-
-
 
 
     Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new CategoryPage(emptyList2)),
     );
-
-
   }
 
   @override
