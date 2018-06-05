@@ -100,7 +100,7 @@ class ProductItemState extends State<ProductItem> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return new CircularProgressIndicator();
+              return new Center(child: new CircularProgressIndicator());
             default:
               if (snapshot.hasError)
                 return new Text('Error: ${snapshot.error}');
