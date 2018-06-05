@@ -141,9 +141,6 @@ class _MainPageState extends State<MainPage> {
           new InputDecoration.collapsed(hintText: 'Cauta in magazin'),
         ),
       ),
-      drawer: new Drawer(
-        child: _image,
-      ),
       body: new SingleChildScrollView(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -163,9 +160,10 @@ class _MainPageState extends State<MainPage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+
           children: <Widget>[
-            _image,
-            new FlatButton(
+/*            new FlatButton(
               color: Colors.greenAccent,
               onPressed: () {
                 pickImage();
@@ -176,6 +174,47 @@ class _MainPageState extends State<MainPage> {
                     new Icon(Icons.category),
                     new Text('Shop by category'),
                   ]),
+            ),*/
+            new Container(
+              height: 500.0,
+              child: new ListView(
+
+
+                children: <Widget>[
+                  new ListTile(
+                    title: new Text("Jocuri de constructie"),
+                    onTap: () {goToCategory(94);},
+                  ),
+                  new ListTile(
+                    title: new Text("Creativitate"),
+                    onTap: () {goToCategory(96);},
+                  ),
+                  new ListTile(
+                    title: new Text("Arta plastica si mestesug"),
+                    onTap: () {goToCategory(97);},
+                  ),
+                  new ListTile(
+                    title: new Text("Instrumente muzicale"),
+                    onTap: () {goToCategory(99);},
+                  ),
+                  new ListTile(
+                    title: new Text("Jucarii pentru bebelusi"),
+                    onTap: () {goToCategory(102);},
+                  ),
+                  new ListTile(
+                    title: new Text("Papusi si joc de rol"),
+                    onTap: () {goToCategory(105);},
+                  ),
+                  new ListTile(
+                    title: new Text("Jocuri si puzzle"),
+                    onTap: () {goToCategory(110);},
+                  ),
+                  new ListTile(
+                    title: new Text("Carti"),
+                    onTap: () {goToCategory(125);},
+                  ),
+                ],
+              ),
             ),
             new Card(
               child: new Row(
