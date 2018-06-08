@@ -8,6 +8,8 @@ import 'package:flutter_advanced_networkimage/zoomable_widget.dart';
 import 'package:flutter_advanced_networkimage/transition_to_image.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:kiosk/lastSeen.dart';
+import 'package:kiosk/imageView.dart';
+import 'package:zoomable_image/zoomable_image.dart';
 
 class ProductInfo {
   final int id;
@@ -112,9 +114,10 @@ class ProductItemState extends State<ProductItem> {
       return new Scaffold(
         backgroundColor: Colors.white,
         appBar: new AppBar(
+
           title: new Text("informatii produs"),
           elevation: 0.0,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
         ),
         body: futureBuilder,
       );
@@ -137,16 +140,20 @@ class ProductItemState extends State<ProductItem> {
     return new SingleChildScrollView(
       child: new Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          new Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Image.network(
-                values.image,
-                height: 200.0,
-              ),
-            ],
+          new GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                new MaterialPageRoute(builder: (context) => new ImageView(values.image)),
+              );
+
+            },
+            child: new Container(
+              height: 200.0,
+              child: new Image.network(values.image),
+            ),
           ),
           new Padding(
             padding: const EdgeInsets.all(8.0),
@@ -256,12 +263,11 @@ class ProductItemState extends State<ProductItem> {
                     child: new Text.rich(
                       new TextSpan(
                         text: values.description
-                            .replaceAll('<p>', '')
-                            .replaceAll('</p>', '')
                             .replaceAll('\r', '')
                             .replaceAll('\t', '')
                             .replaceAll('&nbsp;', ' ')
-                            .replaceAll('\n', ''),
+                            .replaceAll('\n', '')
+                        . replaceAll(new RegExp('<[^>]*>'), ''),
                       ),
                       textAlign: TextAlign.justify,
                       maxLines: _expanded ? 100 : 6,
@@ -301,9 +307,9 @@ class ProductItemState extends State<ProductItem> {
                               context, LastSeen.queue.elementAt(i).id),
                           child:
                               new ProductCard(LastSeen.queue.elementAt(i))))),
-        new Container(
-          height: 20.0,
-        )
+          new Container(
+            height: 20.0,
+          )
         ],
       ),
     );
@@ -350,7 +356,8 @@ class ProductCardState extends State<ProductCard> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             new Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
               child: new Container(
                 height: 114.0,
                 width: 116.0,

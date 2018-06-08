@@ -128,6 +128,8 @@ class CategoryPage extends StatelessWidget {
     // TODO: implement build
     return new Scaffold(
         appBar: new AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.0,
           title: new Text("Produse in categorie"),
           actions: <Widget>[
             new FlatButton(
