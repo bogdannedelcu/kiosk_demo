@@ -315,18 +315,21 @@ class ProductItemState extends State<ProductPage> {
               child: new ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount:
-                      LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
+                  LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
                   itemBuilder: LastSeen.queue.isEmpty
                       ? (BuildContext context, int i) => new Text('empty')
                       : (BuildContext context, int i) {
-                          if (i == 0) return new Container();
+                    if (i == 0) return new Container();
 
-                          return new GestureDetector(
-                              onTap: () => _launchProduct(
-                                  context, LastSeen.queue.elementAt(i).id),
-                              child:
-                                  new ProductCard(LastSeen.queue.elementAt(i)));
-                        })),
+                    return new GestureDetector(
+                        onTap: () =>
+                            _launchProduct(
+                                context, LastSeen.queue
+                                .elementAt(i)
+                                .id, LastSeen.queue.elementAt(i)),
+                        child:
+                        new ProductCard(LastSeen.queue.elementAt(i)));
+                  })),
         ],
       ),
     );
@@ -342,11 +345,11 @@ class ProductItemState extends State<ProductPage> {
 
   }
 
-  _launchProduct(context, int id) {
+  _launchProduct(context, int id, ProductInfo info) {
     print(id);
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new ProductPage(id, null)),
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
     );
   }
 }

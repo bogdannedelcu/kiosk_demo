@@ -7,9 +7,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:kiosk/cart.dart';
 import 'package:kiosk/product.dart';
+import 'package:kiosk/productCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class MainPage extends StatefulWidget {
+class MainPage extends StatelessWidget {
   MainPage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -23,30 +24,11 @@ class MainPage extends StatefulWidget {
 
   final String title;
 
-  @override
-  _MainPageState createState() => new _MainPageState();
-}
-
-
-
-class _MainPageState extends State<MainPage> {
-
-  Future pickImage() async {
-
-    Navigator.push(
-      context,
-      new MaterialPageRoute(builder: (context) => new CartPage()),
-    );
-
-
-
-  }
-
-
-  goToCategory(int i) async {
+  goToCategory(BuildContext context, int i) async {
     //var url = "https://www.handsoneducation.ro/api/rest/products";
     var data;
-    final String url = 'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+    final String url =
+        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
     var httpClient = new HttpClient();
 //    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.108:8888;";
     httpClient.badCertificateCallback =
@@ -89,32 +71,145 @@ class _MainPageState extends State<MainPage> {
       emptyList2.add(item);
     });
 
-
     Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new CategoryPage(emptyList2)),
     );
   }
 
+  _buildCategoryCard(int i) async {
+    //var url = "https://www.handsoneducation.ro/api/rest/products";
+    var data;
+    final String url =
+        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+    var httpClient = new HttpClient();
+//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.108:8888;";
+    httpClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    try {
+      // Make the call
+      var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
+      request.headers.add('Accept', 'application/json');
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(UTF8.decoder).join();
+        // Decode the json response
+        data = JSON.decode(json);
+        // Get the result list
+
+        // Print the results.
+        print('A:' + response.toString());
+      } else {
+        print('B:' + response.toString());
+      }
+    } catch (exception) {
+      print(exception.toString());
+    }
+    var emptyList2 = List<ProductInfo>();
+
+    data.forEach((key, value) {
+      print(key);
+      print(value['name']);
+      double _price = 0.0;
+      if (value['final_price_with_tax'] != null)
+        _price = value['final_price_with_tax'].toDouble();
+
+      var item = new ProductInfo(
+        id: int.parse(value['entity_id']),
+        name: value['name'],
+        description: value['description'],
+        image: value['image_url'],
+        price: _price,
+      );
+      emptyList2.add(item);
+    });
+
+    _launchProduct(context, int id, ProductInfo info) {
+      print(id);
+      Navigator.push(
+        context,
+        new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
+      );
+    }
+
+    return new Container(
+        height: 190.0,
+        child: new ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: emptyList2.length > 8 ? 8 : emptyList2.length,
+            itemBuilder: emptyList2.isEmpty
+                ? (BuildContext context, int i) => new Text('empty')
+                : (BuildContext context, int i) {
+                    return new GestureDetector(
+                        onTap: () => _launchProduct(
+                            context,
+                            emptyList2.elementAt(i).id,
+                            emptyList2.elementAt(i)),
+                        child: new ProductCard(emptyList2.elementAt(i)));
+                  }));
+  }
+
+  _buildFutureLoader(BuildContext context, int i, String name) {
+    return new Column(
+      children: <Widget>[
+        new Container(
+          height: 10.0,
+        ),
+        new GestureDetector(
+          onTap: (){goToCategory(context, i);},
+          child: new Container(
+
+              child: new Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: new Row(
+
+                  mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+                new Text(name),
+                new Expanded(
+
+                    child: new Text('Toate >  ', textAlign: TextAlign.right,)),
+            ],
+          ),
+              )),
+        ),
+        new FutureBuilder<dynamic>(
+          future: _buildCategoryCard(i), // a Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return new Text('no network');
+              case ConnectionState.waiting:
+                return new Text('...');
+              default:
+                if (snapshot.hasError)
+                  return new Text('Error: ${snapshot.error}');
+                else
+                  return snapshot.data;
+            }
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: new AppBar(
-
+        backgroundColor: Colors.white,
+        elevation: 0.0,
         title: new TextField(
           decoration:
-          new InputDecoration.collapsed(hintText: 'Cauta in magazin'),
+              new InputDecoration.collapsed(hintText: 'Cauta in magazin'),
         ),
       ),
       body: new SingleChildScrollView(
-
         child: new Column(
-
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
-
           children: <Widget>[
 /*            new FlatButton(
               color: Colors.greenAccent,
@@ -131,108 +226,15 @@ class _MainPageState extends State<MainPage> {
             new Container(
               height: 500.0,
               child: new ListView(
-
-
                 children: <Widget>[
-                  new ListTile(
-                    title: new Text("Jocuri de constructie"),
-                    onTap: () {goToCategory(94);},
-                  ),
-                  new ListTile(
-                    title: new Text("Creativitate"),
-                    onTap: () {goToCategory(96);},
-                  ),
-                  new ListTile(
-                    title: new Text("Arta plastica si mestesug"),
-                    onTap: () {goToCategory(97);},
-                  ),
-                  new ListTile(
-                    title: new Text("Instrumente muzicale"),
-                    onTap: () {goToCategory(99);},
-                  ),
-                  new ListTile(
-                    title: new Text("Jucarii pentru bebelusi"),
-                    onTap: () {goToCategory(102);},
-                  ),
-                  new ListTile(
-                    title: new Text("Papusi si joc de rol"),
-                    onTap: () {goToCategory(105);},
-                  ),
-                  new ListTile(
-                    title: new Text("Jocuri si puzzle"),
-                    onTap: () {goToCategory(110);},
-                  ),
-                  new ListTile(
-                    title: new Text("Carti"),
-                    onTap: () {goToCategory(125);},
-                  ),
-                ],
-              ),
-            ),
-            new Card(
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  new Flexible(
-                    flex: 1,
-                    child: new MaterialButton(
-                      height: 60.0,
-                      onPressed: () {
-                        goToCategory(94);
-                      },
-                      child: new Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Image.asset('assets/vandute.png'),
-                          new Padding(
-                            padding: const EdgeInsets.symmetric(vertical:4.0),
-                            child: Text(
-                              'Cele mai vandute',
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  new Flexible(
-                    flex: 1,
-                    child: new MaterialButton(
-                        height: 60.0,
-                        onPressed: () {
-                          goToCategory(97);
-                        },
-                        child: new Column(
-                          children: <Widget>[
-                            Image.asset('assets/dolar.png'),
-                            Text(
-                              'De construit',
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        )),
-                  ),
-                  new Flexible(
-                    flex: 1,
-                    child: new MaterialButton(
-                        height: 60.0,
-                        onPressed: () {
-                          goToCategory(108);
-                        },
-                        child: new Column(
-                          children: <Widget>[
-                            Image.asset('assets/resigilate.png'),
-                            new Text(
-                              'Resigilate',
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        )),
-                  ),
+                  _buildFutureLoader(context, 146, 'Copii mici'),
+                  _buildFutureLoader(context, 94, 'Jocuri de constructie'),
+                  _buildFutureLoader(context, 96, 'Creativitate'),
+                  _buildFutureLoader(context, 99, 'Instrumente muzicale'),
+                  _buildFutureLoader(context, 102, 'Pentru bebelusi'),
+                  _buildFutureLoader(context, 105, 'Joc de rol'),
+                  _buildFutureLoader(context, 110, 'Puzzle'),
+                  _buildFutureLoader(context, 125, 'Carti'),
                 ],
               ),
             ),

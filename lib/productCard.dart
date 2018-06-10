@@ -55,7 +55,7 @@ class ProductCardState extends State<ProductCard> {
                 width: 130.0,
                 child: new Text(
                   widget._info.name,
-                  style: new TextStyle(fontSize: 12.0),
+                  style: new TextStyle(fontSize: 14.0),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
                   maxLines: 2,
