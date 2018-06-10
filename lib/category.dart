@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kiosk/mainpage.dart';
 import 'package:kiosk/product.dart';
+import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 
 class CategoryItem extends StatelessWidget {
-  final Info _info;
+  final ProductInfo _info;
 
   CategoryItem(this._info);
 
@@ -11,7 +12,7 @@ class CategoryItem extends StatelessWidget {
     print(id);
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new ProductItem(id)),
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, _info)),
     );
   }
 
@@ -45,9 +46,14 @@ class CategoryItem extends StatelessWidget {
               children: <Widget>[
                 new Container(
                   child: new Container(
-                    height: 110.0,
+                    height: 100.0,
                     width: 160.0,
-                    child: new Image.network(_info.image),
+                    child: new Hero(
+                      tag: _info.image,
+                      child: new Image(
+                        image: new AdvancedNetworkImage(_info.image),
+                      ),
+                    ),
                   ),
                 ),
                 new Expanded(
@@ -119,7 +125,7 @@ class CategoryItem extends StatelessWidget {
 }
 
 class CategoryPage extends StatelessWidget {
-  final List<Info> data;
+  final List<ProductInfo> data;
 
   CategoryPage(this.data);
 

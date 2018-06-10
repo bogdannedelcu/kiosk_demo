@@ -9,6 +9,8 @@ import 'package:flutter_advanced_networkimage/transition_to_image.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:kiosk/lastSeen.dart';
 import 'package:kiosk/imageView.dart';
+import 'package:kiosk/productCard.dart';
+import 'package:kiosk/utils.dart';
 import 'package:zoomable_image/zoomable_image.dart';
 
 class ProductInfo {
@@ -25,14 +27,15 @@ class ProductInfo {
   ProductInfo({this.id, this.name, this.description, this.image, this.price});
 }
 
-class ProductItem extends StatefulWidget {
+class ProductPage extends StatefulWidget {
   final int _id;
+  final ProductInfo _info;
 
-  ProductItem(this._id);
+  ProductPage(this._id, this._info);
 
   @override
   ProductItemState createState() {
-    return new ProductItemState();
+    return new ProductItemState(_info);
   }
 
   Future<ProductInfo> _getData(int id) async {
@@ -71,7 +74,6 @@ class ProductItem extends StatefulWidget {
       id: int.parse(data['entity_id']),
     );
 
-    LastSeen.push(prod);
 
     return prod;
   }
@@ -80,7 +82,7 @@ class ProductItem extends StatefulWidget {
     print(id);
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new ProductItem(id)),
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, null)),
     );
   }
 
@@ -89,9 +91,11 @@ class ProductItem extends StatefulWidget {
   }
 }
 
-class ProductItemState extends State<ProductItem> {
+class ProductItemState extends State<ProductPage> {
   var _expanded = false;
-  ProductInfo values = null;
+  ProductInfo values;
+
+  ProductItemState(this.values);
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +115,11 @@ class ProductItemState extends State<ProductItem> {
           }
         },
       );
+
+
       return new Scaffold(
         backgroundColor: Colors.white,
         appBar: new AppBar(
-
           title: new Text("informatii produs"),
           elevation: 0.0,
           backgroundColor: Colors.transparent,
@@ -122,6 +127,8 @@ class ProductItemState extends State<ProductItem> {
         body: futureBuilder,
       );
     } else {
+
+
       return new Scaffold(
         backgroundColor: Colors.white,
         appBar: new AppBar(
@@ -132,10 +139,16 @@ class ProductItemState extends State<ProductItem> {
         body: createWidget(context, values),
       );
     }
+
+
+
   }
 
   Widget createWidget(BuildContext context, ProductInfo snapshot) {
     values = snapshot;
+
+    LastSeen.push(values);
+
 
     return new SingleChildScrollView(
       child: new Column(
@@ -146,13 +159,18 @@ class ProductItemState extends State<ProductItem> {
             onTap: () {
               Navigator.push(
                 context,
-                new MaterialPageRoute(builder: (context) => new ImageView(values.image)),
+                new MaterialPageRoute(
+                    builder: (context) => new ImageView(values.image)),
               );
-
             },
             child: new Container(
               height: 200.0,
-              child: new Image.network(values.image),
+              child: new Hero(
+                tag: values.image,
+                child: new Image(
+                  image: new AdvancedNetworkImage(values.image),
+                ),
+              ),
             ),
           ),
           new Padding(
@@ -184,7 +202,7 @@ class ProductItemState extends State<ProductItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     new Text(
-                      _priceIntreg(values.price).toString(),
+                      priceIntreg(values.price).toString(),
                       style: new TextStyle(
                           fontSize: 25.0,
                           color: Colors.red,
@@ -194,7 +212,7 @@ class ProductItemState extends State<ProductItem> {
                     new Column(
                       children: <Widget>[
                         new Text(
-                          _priceDecimals(values.price).toString(),
+                          priceDecimals(values.price).toString(),
                           style: new TextStyle(
                               fontSize: 15.0,
                               color: Colors.red,
@@ -267,7 +285,7 @@ class ProductItemState extends State<ProductItem> {
                             .replaceAll('\t', '')
                             .replaceAll('&nbsp;', ' ')
                             .replaceAll('\n', '')
-                        . replaceAll(new RegExp('<[^>]*>'), ''),
+                            .replaceAll(new RegExp('<[^>]*>'), ''),
                       ),
                       textAlign: TextAlign.justify,
                       maxLines: _expanded ? 100 : 6,
@@ -290,9 +308,7 @@ class ProductItemState extends State<ProductItem> {
           ),
           new Padding(
             padding: const EdgeInsets.all(8.0),
-            child: new Text('Produse vizualizare recent',
-                style:
-                    new TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0)),
+            child: _showCards(context),
           ),
           new Container(
               height: 190.0,
@@ -301,131 +317,36 @@ class ProductItemState extends State<ProductItem> {
                   itemCount:
                       LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
                   itemBuilder: LastSeen.queue.isEmpty
-                      ? (BuildContext context, int i) => new Text('empry')
-                      : (BuildContext context, int i) => new GestureDetector(
-                          onTap: () => _launchProduct(
-                              context, LastSeen.queue.elementAt(i).id),
-                          child:
-                              new ProductCard(LastSeen.queue.elementAt(i))))),
-          new Container(
-            height: 20.0,
-          )
+                      ? (BuildContext context, int i) => new Text('empty')
+                      : (BuildContext context, int i) {
+                          if (i == 0) return new Container();
+
+                          return new GestureDetector(
+                              onTap: () => _launchProduct(
+                                  context, LastSeen.queue.elementAt(i).id),
+                              child:
+                                  new ProductCard(LastSeen.queue.elementAt(i)));
+                        })),
         ],
       ),
     );
+  }
+
+  _showCards(BuildContext context) {
+//    if (LastSeen.queue.length < 1)
+//      return new Container();
+
+    return new Text('Produse vizualizate recent',
+        style:
+        new TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0));
+
   }
 
   _launchProduct(context, int id) {
     print(id);
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new ProductItem(id)),
-    );
-  }
-}
-
-int _priceIntreg(double price) {
-  return price.floor();
-}
-
-int _priceDecimals(double price) {
-  return ((price - price.floor()) * 100).floor();
-}
-
-class ProductCard extends StatefulWidget {
-  final ProductInfo _info;
-
-  ProductCard(this._info);
-
-  @override
-  ProductCardState createState() {
-    return new ProductCardState();
-  }
-}
-
-class ProductCardState extends State<ProductCard> {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return new Card(
-      elevation: 8.0,
-      child: new Container(
-        height: 180.0,
-        width: 140.0,
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            new Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-              child: new Container(
-                height: 114.0,
-                width: 116.0,
-                child: new Image.network(
-                  widget._info.image,
-                  width: 120.0,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-            new Container(
-                height: 32.0,
-                width: 130.0,
-                child: new Text(
-                  widget._info.name,
-                  style: new TextStyle(fontSize: 12.0),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.fade,
-                  maxLines: 2,
-                )),
-            new Expanded(
-                child: new Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                new Center(
-                  child: new Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Text(
-                        _priceIntreg(widget._info.price).toString(),
-                        style: new TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.right,
-                      ),
-                      new Column(
-                        children: <Widget>[
-                          new Text(
-                            _priceDecimals(widget._info.price).toString(),
-                            style: new TextStyle(
-                                fontSize: 12.0,
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                      new Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: new Text(
-                          ' Lei',
-                          style: new TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )),
-          ],
-        ),
-      ),
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, null)),
     );
   }
 }

@@ -28,9 +28,12 @@ class ImageView extends StatelessWidget {
           tapCallback: () {
             Navigator.pop(context, null);
           },
-          child: new Container(
-            child: new TransitionToImage(
-              new AdvancedNetworkImage(_image),
+
+          enablePan: true,
+          child: new Hero(
+            tag: _image,
+            child: new Image(
+              image: new AdvancedNetworkImage(_image),
             ),
           ),
         ));

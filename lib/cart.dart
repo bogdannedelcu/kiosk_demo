@@ -11,7 +11,7 @@ class CartPage extends StatelessWidget {
     print(id);
     Navigator.push(
       context,
-      new MaterialPageRoute(builder: (context) => new ProductItem(id)),
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, null)),
     );
   }
 

@@ -8,6 +8,7 @@ final ThemeData kIOSTheme = new ThemeData(
   primarySwatch: Colors.blue,
   primaryColor: Colors.grey[100],
   primaryColorBrightness: Brightness.light,
+  fontFamily: 'OpenSansCondensed',
 );
 
 class MyApp extends StatelessWidget {
@@ -15,8 +16,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Kiosk',
       theme: kIOSTheme,
+      title: 'Kiosk',
       home: new MainPage(title: 'Kiosk sales'),
     );
   }
