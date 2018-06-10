@@ -166,10 +166,10 @@ class MainPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-                new Text(name),
+                new Text(name, style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),),
                 new Expanded(
 
-                    child: new Text('Toate >  ', textAlign: TextAlign.right,)),
+                    child: new Text('Toate >  ', textAlign: TextAlign.right, style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0))),
             ],
           ),
               )),
@@ -205,39 +205,18 @@ class MainPage extends StatelessWidget {
               new InputDecoration.collapsed(hintText: 'Cauta in magazin'),
         ),
       ),
-      body: new SingleChildScrollView(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+      body: new Container(
+        child: new ListView(
+
           children: <Widget>[
-/*            new FlatButton(
-              color: Colors.greenAccent,
-              onPressed: () {
-                pickImage();
-              },
-              child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Icon(Icons.category),
-                    new Text('Shop by category'),
-                  ]),
-            ),*/
-            new Container(
-              height: 500.0,
-              child: new ListView(
-                children: <Widget>[
-                  _buildFutureLoader(context, 146, 'Copii mici'),
-                  _buildFutureLoader(context, 94, 'Jocuri de constructie'),
-                  _buildFutureLoader(context, 96, 'Creativitate'),
-                  _buildFutureLoader(context, 99, 'Instrumente muzicale'),
-                  _buildFutureLoader(context, 102, 'Pentru bebelusi'),
-                  _buildFutureLoader(context, 105, 'Joc de rol'),
-                  _buildFutureLoader(context, 110, 'Puzzle'),
-                  _buildFutureLoader(context, 125, 'Carti'),
-                ],
-              ),
-            ),
+            _buildFutureLoader(context, 146, 'Copii mici'),
+            _buildFutureLoader(context, 94, 'Jocuri de constructie'),
+            _buildFutureLoader(context, 96, 'Creativitate'),
+            _buildFutureLoader(context, 99, 'Instrumente muzicale'),
+            _buildFutureLoader(context, 102, 'Pentru bebelusi'),
+            _buildFutureLoader(context, 105, 'Joc de rol'),
+            _buildFutureLoader(context, 110, 'Puzzle'),
+            _buildFutureLoader(context, 125, 'Carti'),
           ],
         ),
       ),
