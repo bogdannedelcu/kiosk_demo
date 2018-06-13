@@ -83,7 +83,8 @@ class MainPage extends StatelessWidget {
     final String url =
         'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
     var httpClient = new HttpClient();
-//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.108:8888;";
+
+//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
     httpClient.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     try {
@@ -124,13 +125,7 @@ class MainPage extends StatelessWidget {
       emptyList2.add(item);
     });
 
-    _launchProduct(context, int id, ProductInfo info) {
-      print(id);
-      Navigator.push(
-        context,
-        new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
-      );
-    }
+
 
     return new Container(
         height: 190.0,
@@ -149,6 +144,14 @@ class MainPage extends StatelessWidget {
                   }));
   }
 
+  _launchProduct(context, int id, ProductInfo info) {
+    print(id);
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
+    );
+  }
+
   _buildFutureLoader(BuildContext context, int i, String name) {
     return new Column(
       children: <Widget>[
@@ -156,23 +159,29 @@ class MainPage extends StatelessWidget {
           height: 10.0,
         ),
         new GestureDetector(
-          onTap: (){goToCategory(context, i);},
+          onTap: () {
+            goToCategory(context, i);
+          },
           child: new Container(
-
               child: new Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new Row(
-
-                  mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-                new Text(name, style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0),),
+            padding: const EdgeInsets.all(8.0),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                new Text(
+                  name,
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14.0),
+                ),
                 new Expanded(
-
-                    child: new Text('Toate >  ', textAlign: TextAlign.right, style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 14.0))),
-            ],
-          ),
-              )),
+                    child: new Text('Toate >  ',
+                        textAlign: TextAlign.right,
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14.0))),
+              ],
+            ),
+          )),
         ),
         new FutureBuilder<dynamic>(
           future: _buildCategoryCard(i), // a Future<String> or null
@@ -207,7 +216,7 @@ class MainPage extends StatelessWidget {
       ),
       body: new Container(
         child: new ListView(
-
+          itemExtent: 240.0,
           children: <Widget>[
             _buildFutureLoader(context, 146, 'Copii mici'),
             _buildFutureLoader(context, 94, 'Jocuri de constructie'),
