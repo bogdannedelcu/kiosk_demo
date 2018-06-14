@@ -13,18 +13,11 @@ import 'package:kiosk/product.dart';
 import 'package:kiosk/utils.dart';
 import 'package:zoomable_image/zoomable_image.dart';
 
-class ProductCard extends StatefulWidget {
+class ProductCard extends StatelessWidget {
   final ProductInfo _info;
 
   ProductCard(this._info);
 
-  @override
-  ProductCardState createState() {
-    return new ProductCardState();
-  }
-}
-
-class ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -43,9 +36,9 @@ class ProductCardState extends State<ProductCard> {
                 height: 114.0,
                 width: 116.0,
                 child: new Hero(
-                  tag: widget._info.image,
+                  tag: _info.image,
                   child: new Image(
-                    image: new AdvancedNetworkImage(widget._info.image),
+                    image: new AdvancedNetworkImage(_info.image),
                   ),
                 ),
               ),
@@ -54,7 +47,7 @@ class ProductCardState extends State<ProductCard> {
                 height: 32.0,
                 width: 130.0,
                 child: new Text(
-                  widget._info.name,
+                  _info.name,
                   style: new TextStyle(fontSize: 14.0),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.fade,
@@ -70,7 +63,7 @@ class ProductCardState extends State<ProductCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text(
-                            priceIntreg(widget._info.price).toString(),
+                            priceIntreg(_info.price).toString(),
                             style: new TextStyle(
                                 fontSize: 16.0,
                                 color: Colors.red,
@@ -80,7 +73,7 @@ class ProductCardState extends State<ProductCard> {
                           new Column(
                             children: <Widget>[
                               new Text(
-                                priceDecimals(widget._info.price).toString(),
+                                priceDecimals(_info.price).toString(),
                                 style: new TextStyle(
                                     fontSize: 12.0,
                                     color: Colors.red,

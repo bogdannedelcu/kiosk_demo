@@ -9,6 +9,7 @@ import 'package:kiosk/cart.dart';
 import 'package:kiosk/product.dart';
 import 'package:kiosk/productCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class MainPage extends StatelessWidget {
   MainPage({Key key, this.title}) : super(key: key);
@@ -125,8 +126,6 @@ class MainPage extends StatelessWidget {
       emptyList2.add(item);
     });
 
-
-
     return new Container(
         height: 190.0,
         child: new ListView.builder(
@@ -149,6 +148,102 @@ class MainPage extends StatelessWidget {
     Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
+    );
+  }
+
+  _buildCategoryList(BuildContext context, int i) async {
+    //var url = "https://www.handsoneducation.ro/api/rest/products";
+    var data;
+    final String url =
+        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+    var httpClient = new HttpClient();
+
+//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
+    httpClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    try {
+      // Make the call
+      var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
+      request.headers.add('Accept', 'application/json');
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(UTF8.decoder).join();
+        // Decode the json response
+        data = JSON.decode(json);
+        // Get the result list
+
+        // Print the results.
+        print('A:' + response.toString());
+      } else {
+        print('B:' + response.toString());
+      }
+    } catch (exception) {
+      print(exception.toString());
+    }
+    var emptyList2 = List<ProductInfo>();
+
+    data.forEach((key, value) {
+      print(key);
+      print(value['name']);
+      double _price = 0.0;
+      if (value['final_price_with_tax'] != null)
+        _price = value['final_price_with_tax'].toDouble();
+
+      var item = new ProductInfo(
+        id: int.parse(value['entity_id']),
+        name: value['name'],
+        description: value['description'],
+        image: value['image_url'],
+        price: _price,
+      );
+      emptyList2.add(item);
+    });
+
+    return new CarouselSlider(
+      items: emptyList2.map((item) {
+        return new GestureDetector(
+          onTap: () {
+            _launchProduct(
+                context, item.id, item);
+          },
+          child: new Stack(
+            alignment: AlignmentDirectional.bottomCenter,
+            children: [
+              new Container(
+                margin: new EdgeInsets.symmetric(horizontal: 5.0),
+                decoration: new BoxDecoration(
+                    borderRadius:
+                        new BorderRadius.all(new Radius.circular(5.0)),
+                    image: new DecorationImage(
+                        image: new NetworkImage(item.image),
+                        fit: BoxFit.fitHeight)),
+              ),
+              new Text(item.name),
+            ],
+          ),
+        );
+      }).toList(),
+      viewportFraction: 0.9,
+      aspectRatio: 2.0,
+    );
+  }
+
+  _buildFutureCarousel(BuildContext context, int i) {
+    return new FutureBuilder<dynamic>(
+      future: _buildCategoryList(context, i), // a Future<String> or null
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return new Text('no network');
+          case ConnectionState.waiting:
+            return new Text('...');
+          default:
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            else
+              return snapshot.data;
+        }
+      },
     );
   }
 
@@ -214,20 +309,37 @@ class MainPage extends StatelessWidget {
               new InputDecoration.collapsed(hintText: 'Cauta in magazin'),
         ),
       ),
-      body: new Container(
-        child: new ListView(
-          itemExtent: 240.0,
-          children: <Widget>[
-            _buildFutureLoader(context, 146, 'Copii mici'),
-            _buildFutureLoader(context, 94, 'Jocuri de constructie'),
-            _buildFutureLoader(context, 96, 'Creativitate'),
-            _buildFutureLoader(context, 99, 'Instrumente muzicale'),
-            _buildFutureLoader(context, 102, 'Pentru bebelusi'),
-            _buildFutureLoader(context, 105, 'Joc de rol'),
-            _buildFutureLoader(context, 110, 'Puzzle'),
-            _buildFutureLoader(context, 125, 'Carti'),
-          ],
-        ),
+      body: new Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          new Expanded(
+            child: new ListView(
+              itemExtent: 240.0,
+              children: <Widget>[
+                new Container(
+                  color: Colors.white,
+                  height: 200.0,
+                  child: _buildFutureCarousel(context, 146),
+
+                  /*Carousel(
+
+                      boxFit: BoxFit.fitHeight,
+                      images: [
+                      ],
+                    )*/
+                ),
+                _buildFutureLoader(context, 146, 'Copii mici'),
+                _buildFutureLoader(context, 94, 'Jocuri de constructie'),
+                _buildFutureLoader(context, 96, 'Creativitate'),
+                _buildFutureLoader(context, 99, 'Instrumente muzicale'),
+                _buildFutureLoader(context, 102, 'Pentru bebelusi'),
+                _buildFutureLoader(context, 105, 'Joc de rol'),
+                _buildFutureLoader(context, 110, 'Puzzle'),
+                _buildFutureLoader(context, 125, 'Carti'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
