@@ -78,6 +78,59 @@ class MainPage extends StatelessWidget {
     );
   }
 
+  goToCategorySearch(BuildContext context, String i) async {
+    //var url = "https://www.handsoneducation.ro/api/rest/products";
+    var data;
+    final String url =
+        'https://www.handsoneducation.ro/api/rest/products?filter%5B1%5D%5Battribute%5D=name&filter%5B1%5D%5Blike%5D=%%' + i.toString() + '%%';
+    var httpClient = new HttpClient();
+    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
+    httpClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    try {
+      // Make the call
+      var request = await httpClient.getUrl(Uri.parse(url));
+      request.headers.add('Accept', 'application/json');
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(UTF8.decoder).join();
+        // Decode the json response
+        data = JSON.decode(json);
+        // Get the result list
+
+        // Print the results.
+        print('A:' + response.toString());
+      } else {
+        print('B:' + response.toString());
+      }
+    } catch (exception) {
+      print(exception.toString());
+    }
+    var emptyList2 = List<ProductInfo>();
+
+    data.forEach((key, value) {
+      print(key);
+      print(value['name']);
+      double _price = 0.0;
+      if (value['final_price_with_tax'] != null)
+        _price = value['final_price_with_tax'].toDouble();
+
+      var item = new ProductInfo(
+        id: int.parse(value['entity_id']),
+        name: value['name'],
+        description: value['description'],
+        image: value['image_url'],
+        price: _price,
+      );
+      emptyList2.add(item);
+    });
+
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new CategoryPage(emptyList2)),
+    );
+  }
+
   _buildCategoryCard(int i) async {
     //var url = "https://www.handsoneducation.ro/api/rest/products";
     var data;
@@ -300,46 +353,72 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        title: new TextField(
-          decoration:
-              new InputDecoration.collapsed(hintText: 'Cauta in magazin'),
-        ),
-      ),
-      body: new Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          new Expanded(
-            child: new ListView(
-              itemExtent: 240.0,
-              children: <Widget>[
-                new Container(
-                  color: Colors.white,
-                  height: 200.0,
-                  child: _buildFutureCarousel(context, 146),
+    return new Material(
+      child: new Stack(
+        children: [
+          new Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            new Expanded(
+              child: new ListView(
+                itemExtent: 240.0,
+                children: <Widget>[
+                  new Container(
+                    color: Colors.white,
+                    height: 200.0,
+                    child: _buildFutureCarousel(context, 146),
 
-                  /*Carousel(
+                    /*Carousel(
 
-                      boxFit: BoxFit.fitHeight,
-                      images: [
-                      ],
-                    )*/
-                ),
-                _buildFutureLoader(context, 146, 'Copii mici'),
-                _buildFutureLoader(context, 94, 'Jocuri de constructie'),
-                _buildFutureLoader(context, 96, 'Creativitate'),
-                _buildFutureLoader(context, 99, 'Instrumente muzicale'),
-                _buildFutureLoader(context, 102, 'Pentru bebelusi'),
-                _buildFutureLoader(context, 105, 'Joc de rol'),
-                _buildFutureLoader(context, 110, 'Puzzle'),
-                _buildFutureLoader(context, 125, 'Carti'),
-              ],
+                        boxFit: BoxFit.fitHeight,
+                        images: [
+                        ],
+                      )*/
+                  ),
+                  _buildFutureLoader(context, 146, 'Copii mici'),
+                  _buildFutureLoader(context, 94, 'Jocuri de constructie'),
+                  _buildFutureLoader(context, 96, 'Creativitate'),
+                  _buildFutureLoader(context, 99, 'Instrumente muzicale'),
+                  _buildFutureLoader(context, 102, 'Pentru bebelusi'),
+                  _buildFutureLoader(context, 105, 'Joc de rol'),
+                  _buildFutureLoader(context, 110, 'Puzzle'),
+                  _buildFutureLoader(context, 125, 'Carti'),
+                ],
+              ),
             ),
+          ],
+        ),
+          new Container(
+            child: new Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0
+
+              ),
+              child: new TextField(
+                maxLines: 1,
+                style: TextStyle(
+                  color: Colors.black
+
+                ),
+
+                keyboardType: TextInputType.text,
+                onSubmitted: (newValue) => goToCategorySearch(context, newValue),
+
+                decoration: new InputDecoration(
+                  prefixIcon: new Icon(Icons.search),
+                  filled: true,
+                    fillColor: Colors.white70,
+                    isDense: true,
+
+                    border:  new OutlineInputBorder(
+                      borderRadius: BorderRadius.zero,
+              ),
+                    hintText: 'Cauta produse'
+                ),
+              ),
+            ),
+
           ),
-        ],
+      ],
       ),
     );
   }

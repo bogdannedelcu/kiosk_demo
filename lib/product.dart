@@ -168,7 +168,7 @@ class ProductItemState extends State<ProductPage> {
               child: new Hero(
                 tag: values.image,
                 child: new Image(
-                  image: new AdvancedNetworkImage(values.image),
+                  image: new NetworkImage(values.image),
                 ),
               ),
             ),

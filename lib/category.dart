@@ -51,7 +51,7 @@ class CategoryItem extends StatelessWidget {
                     child: new Hero(
                       tag: _info.image,
                       child: new Image(
-                        image: new AdvancedNetworkImage(_info.image),
+                        image: new NetworkImage(_info.image),
                       ),
                     ),
                   ),
