@@ -84,7 +84,7 @@ class MainPage extends StatelessWidget {
     final String url =
         'https://www.handsoneducation.ro/api/rest/products?filter%5B1%5D%5Battribute%5D=name&filter%5B1%5D%5Blike%5D=%%' + i.toString() + '%%';
     var httpClient = new HttpClient();
-    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
+//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
     httpClient.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
     try {
