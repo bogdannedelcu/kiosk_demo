@@ -22,9 +22,11 @@ class ProductInfo {
 
   final String image;
 
+  final String sku;
+
   final double price;
 
-  ProductInfo({this.id, this.name, this.description, this.image, this.price});
+  ProductInfo({this.id, this.name, this.description, this.image, this.price, this.sku});
 }
 
 class ProductPage extends StatefulWidget {
@@ -72,6 +74,7 @@ class ProductPage extends StatefulWidget {
       image: data['image_url'],
       price: data['final_price_with_tax'],
       id: int.parse(data['entity_id']),
+      sku: data['sku'],
     );
 
 
@@ -190,6 +193,7 @@ class ProductItemState extends State<ProductPage> {
           new Container(
             padding: const EdgeInsets.all(8.0),
             child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Expanded(
                   child: new Text(
@@ -198,6 +202,14 @@ class ProductItemState extends State<ProductPage> {
                     textAlign: TextAlign.left,
                   ),
                 ),
+                new Expanded(
+                  child: new Text(
+                    values.sku,
+                    style: new TextStyle(fontSize: 13.0, color: Colors.black),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+
                 new Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[

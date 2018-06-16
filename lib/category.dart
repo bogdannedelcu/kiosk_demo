@@ -28,6 +28,7 @@ class CategoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Card(
+      elevation: 2.0,
       child: new Container(
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,

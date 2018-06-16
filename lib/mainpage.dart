@@ -81,9 +81,12 @@ class MainPage extends StatelessWidget {
   goToCategorySearch(BuildContext context, String i) async {
     //var url = "https://www.handsoneducation.ro/api/rest/products";
     var data;
-    final String url =
-        'https://www.handsoneducation.ro/api/rest/products?filter%5B1%5D%5Battribute%5D=name&filter%5B1%5D%5Blike%5D=%%' + i.toString() + '%%';
+    String url =
+        'https://www.handsoneducation.ro/api/rest/products?limit=40&filter%5B1%5D%5Battribute%5D=name&filter%5B1%5D%5Blike%5D=%25' +
+            i.toString() +
+            '%25';
     var httpClient = new HttpClient();
+    var json = '';
 //    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
     httpClient.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
@@ -93,7 +96,7 @@ class MainPage extends StatelessWidget {
       request.headers.add('Accept', 'application/json');
       var response = await request.close();
       if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(UTF8.decoder).join();
+        json = await response.transform(UTF8.decoder).join();
         // Decode the json response
         data = JSON.decode(json);
         // Get the result list
@@ -108,6 +111,37 @@ class MainPage extends StatelessWidget {
     }
     var emptyList2 = List<ProductInfo>();
 
+    if (json == '[]') {
+      String url =
+          'https://www.handsoneducation.ro/api/rest/products?limit=40&filter%5B1%5D%5Battribute%5D=sku&filter%5B1%5D%5Blike%5D=%25' +
+              i.toString() +
+              '%25';
+      var httpClient = new HttpClient();
+//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
+      httpClient.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      try {
+        // Make the call
+        var request = await httpClient.getUrl(Uri.parse(url));
+        request.headers.add('Accept', 'application/json');
+        var response = await request.close();
+        if (response.statusCode == HttpStatus.OK) {
+          var json = await response.transform(UTF8.decoder).join();
+          // Decode the json response
+          data = JSON.decode(json);
+          // Get the result list
+
+          // Print the results.
+          print('A:' + response.toString());
+        } else {
+          print('B:' + response.toString());
+        }
+      } catch (exception) {
+        print(exception.toString());
+      }
+
+    }
+
     data.forEach((key, value) {
       print(key);
       print(value['name']);
@@ -121,6 +155,8 @@ class MainPage extends StatelessWidget {
         description: value['description'],
         image: value['image_url'],
         price: _price,
+        sku: value['sku'],
+
       );
       emptyList2.add(item);
     });
@@ -131,251 +167,266 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  _buildCategoryCard(int i) async {
-    //var url = "https://www.handsoneducation.ro/api/rest/products";
-    var data;
-    final String url =
-        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
-    var httpClient = new HttpClient();
+
+_buildCategoryCard(int i) async {
+  //var url = "https://www.handsoneducation.ro/api/rest/products";
+  var data;
+  final String url =
+      'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+  var httpClient = new HttpClient();
 
 //    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
-    httpClient.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-    try {
-      // Make the call
-      var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
-      request.headers.add('Accept', 'application/json');
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(UTF8.decoder).join();
-        // Decode the json response
-        data = JSON.decode(json);
-        // Get the result list
+  httpClient.badCertificateCallback =
+      (X509Certificate cert, String host, int port) => true;
+  try {
+    // Make the call
+    var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
+    request.headers.add('Accept', 'application/json');
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var json = await response.transform(UTF8.decoder).join();
+      // Decode the json response
+      data = JSON.decode(json);
+      // Get the result list
 
-        // Print the results.
-        print('A:' + response.toString());
-      } else {
-        print('B:' + response.toString());
-      }
-    } catch (exception) {
-      print(exception.toString());
+      // Print the results.
+      print('A:' + response.toString());
+    } else {
+      print('B:' + response.toString());
     }
-    var emptyList2 = List<ProductInfo>();
-
-    data.forEach((key, value) {
-      print(key);
-      print(value['name']);
-      double _price = 0.0;
-      if (value['final_price_with_tax'] != null)
-        _price = value['final_price_with_tax'].toDouble();
-
-      var item = new ProductInfo(
-        id: int.parse(value['entity_id']),
-        name: value['name'],
-        description: value['description'],
-        image: value['image_url'],
-        price: _price,
-      );
-      emptyList2.add(item);
-    });
-
-    return new Container(
-        height: 190.0,
-        child: new ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: emptyList2.length > 8 ? 8 : emptyList2.length,
-            itemBuilder: emptyList2.isEmpty
-                ? (BuildContext context, int i) => new Text('empty')
-                : (BuildContext context, int i) {
-                    return new GestureDetector(
-                        onTap: () => _launchProduct(
-                            context,
-                            emptyList2.elementAt(i).id,
-                            emptyList2.elementAt(i)),
-                        child: new ProductCard(emptyList2.elementAt(i)));
-                  }));
+  } catch (exception) {
+    print(exception.toString());
   }
+  var emptyList2 = List<ProductInfo>();
 
-  _launchProduct(context, int id, ProductInfo info) {
-    print(id);
-    Navigator.push(
-      context,
-      new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
+  data.forEach((key, value) {
+    print(key);
+    print(value['name']);
+    double _price = 0.0;
+    if (value['final_price_with_tax'] != null)
+      _price = value['final_price_with_tax'].toDouble();
+
+    var item = new ProductInfo(
+      id: int.parse(value['entity_id']),
+      name: value['name'],
+      description: value['description'],
+      image: value['image_url'],
+      price: _price,
+      sku: value['sku'],
+
     );
-  }
+    emptyList2.add(item);
+  });
 
-  _buildCategoryList(BuildContext context, int i) async {
-    //var url = "https://www.handsoneducation.ro/api/rest/products";
-    var data;
-    final String url =
-        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
-    var httpClient = new HttpClient();
+  return new Container(
+      height: 190.0,
+      child: new ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: emptyList2.length > 8 ? 8 : emptyList2.length,
+          itemBuilder: emptyList2.isEmpty
+              ? (BuildContext context, int i) => new Text('empty')
+              : (BuildContext context, int i) {
+            return new GestureDetector(
+                onTap: () =>
+                    _launchProduct(
+                        context,
+                        emptyList2
+                            .elementAt(i)
+                            .id,
+                        emptyList2.elementAt(i)),
+                child: new ProductCard(emptyList2.elementAt(i)));
+          }));
+}
+
+_launchProduct(context, int id, ProductInfo info) {
+  print(id);
+  Navigator.push(
+    context,
+    new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
+  );
+}
+
+_buildCategoryList(BuildContext context, int i) async {
+  //var url = "https://www.handsoneducation.ro/api/rest/products";
+  var data;
+  final String url =
+      'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+  var httpClient = new HttpClient();
 
 //    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
-    httpClient.badCertificateCallback =
-        (X509Certificate cert, String host, int port) => true;
-    try {
-      // Make the call
-      var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
-      request.headers.add('Accept', 'application/json');
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(UTF8.decoder).join();
-        // Decode the json response
-        data = JSON.decode(json);
-        // Get the result list
+  httpClient.badCertificateCallback =
+      (X509Certificate cert, String host, int port) => true;
+  try {
+    // Make the call
+    var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
+    request.headers.add('Accept', 'application/json');
+    var response = await request.close();
+    if (response.statusCode == HttpStatus.OK) {
+      var json = await response.transform(UTF8.decoder).join();
+      // Decode the json response
+      data = JSON.decode(json);
+      // Get the result list
 
-        // Print the results.
-        print('A:' + response.toString());
-      } else {
-        print('B:' + response.toString());
-      }
-    } catch (exception) {
-      print(exception.toString());
+      // Print the results.
+      print('A:' + response.toString());
+    } else {
+      print('B:' + response.toString());
     }
-    var emptyList2 = List<ProductInfo>();
-
-    data.forEach((key, value) {
-      print(key);
-      print(value['name']);
-      double _price = 0.0;
-      if (value['final_price_with_tax'] != null)
-        _price = value['final_price_with_tax'].toDouble();
-
-      var item = new ProductInfo(
-        id: int.parse(value['entity_id']),
-        name: value['name'],
-        description: value['description'],
-        image: value['image_url'],
-        price: _price,
-      );
-      emptyList2.add(item);
-    });
-
-    return new CarouselSlider(
-      items: emptyList2.map((item) {
-        return new GestureDetector(
-          onTap: () {
-            _launchProduct(
-                context, item.id, item);
-          },
-          child: new Stack(
-            alignment: AlignmentDirectional.bottomCenter,
-            children: [
-              new Container(
-                margin: new EdgeInsets.symmetric(horizontal: 5.0),
-                decoration: new BoxDecoration(
-                    borderRadius:
-                        new BorderRadius.all(new Radius.circular(5.0)),
-                    image: new DecorationImage(
-                        image: new NetworkImage(item.image),
-                        fit: BoxFit.fitHeight)),
-              ),
-              new Text(item.name),
-            ],
-          ),
-        );
-      }).toList(),
-      viewportFraction: 0.9,
-      aspectRatio: 2.0,
-    );
+  } catch (exception) {
+    print(exception.toString());
   }
+  var emptyList2 = List<ProductInfo>();
 
-  _buildFutureCarousel(BuildContext context, int i) {
-    return new FutureBuilder<dynamic>(
-      future: _buildCategoryList(context, i), // a Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return new Text('no network');
-          case ConnectionState.waiting:
-            return new Text('...');
-          default:
-            if (snapshot.hasError)
-              return new Text('Error: ${snapshot.error}');
-            else
-              return snapshot.data;
-        }
-      },
+  data.forEach((key, value) {
+    print(key);
+    print(value['name']);
+    double _price = 0.0;
+    if (value['final_price_with_tax'] != null)
+      _price = value['final_price_with_tax'].toDouble();
+
+    var item = new ProductInfo(
+      id: int.parse(value['entity_id']),
+      name: value['name'],
+      description: value['description'],
+      image: value['image_url'],
+      price: _price,
+      sku: value['sku'],
+
     );
-  }
+    emptyList2.add(item);
+  });
 
-  _buildFutureLoader(BuildContext context, int i, String name) {
-    return new Column(
-      children: <Widget>[
-        new Container(
-          height: 10.0,
-        ),
-        new GestureDetector(
-          onTap: () {
-            goToCategory(context, i);
-          },
-          child: new Container(
-              child: new Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                new Text(
-                  name,
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 14.0),
+  return new CarouselSlider(
+    items: emptyList2.map((item) {
+      return new GestureDetector(
+        onTap: () {
+          _launchProduct(context, item.id, item);
+        },
+        child: new Stack(
+          alignment: AlignmentDirectional.bottomCenter,
+          children: [
+            new Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new Hero(
+                tag: item.image,
+                child: new Container(
+                  margin: new EdgeInsets.symmetric(horizontal: 5.0),
+                  decoration: new BoxDecoration(
+                      borderRadius:
+                      new BorderRadius.all(new Radius.circular(5.0)),
+                      image: new DecorationImage(
+                          image: new NetworkImage(item.image),
+                          fit: BoxFit.fitHeight)),
                 ),
-                new Expanded(
-                    child: new Text('Toate >  ',
-                        textAlign: TextAlign.right,
-                        style: new TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 14.0))),
-              ],
+              ),
             ),
-          )),
+            new Text(item.name),
+          ],
         ),
-        new FutureBuilder<dynamic>(
-          future: _buildCategoryCard(i), // a Future<String> or null
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                return new Text('no network');
-              case ConnectionState.waiting:
-                return new Text('...');
-              default:
-                if (snapshot.hasError)
-                  return new Text('Error: ${snapshot.error}');
-                else
-                  return snapshot.data;
-            }
-          },
-        ),
-      ],
-    );
-  }
+      );
+    }).toList(),
+    viewportFraction: 0.9,
+    aspectRatio: 2.0,
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return new Material(
-      child: new Stack(
-        children: [
-          new Column(
+_buildFutureCarousel(BuildContext context, int i) {
+  return new FutureBuilder<dynamic>(
+    future: _buildCategoryList(context, i), // a Future<String> or null
+    builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+      switch (snapshot.connectionState) {
+        case ConnectionState.none:
+          return new Text('no network');
+        case ConnectionState.waiting:
+          return new Text('...');
+        default:
+          if (snapshot.hasError)
+            return new Text('Error: ${snapshot.error}');
+          else
+            return snapshot.data;
+      }
+    },
+  );
+}
+
+_buildFutureLoader(BuildContext context, int i, String name) {
+  return new Column(
+    children: <Widget>[
+      new Container(
+        height: 10.0,
+      ),
+      new GestureDetector(
+        onTap: () {
+          goToCategory(context, i);
+        },
+        child: new Container(
+            child: new Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: new Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Text(
+                    name,
+                    style: new TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14.0),
+                  ),
+                  new Expanded(
+                      child: new Text('Toate >  ',
+                          textAlign: TextAlign.right,
+                          style: new TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14.0))),
+                ],
+              ),
+            )),
+      ),
+      new FutureBuilder<dynamic>(
+        future: _buildCategoryCard(i), // a Future<String> or null
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return new Text('no network');
+            case ConnectionState.waiting:
+              return new Text('...');
+            default:
+              if (snapshot.hasError)
+                return new Text('Error: ${snapshot.error}');
+              else
+                return snapshot.data;
+          }
+        },
+      ),
+    ],
+  );
+}
+
+@override
+Widget build(BuildContext context) {
+  return new Material(
+    child: new Stack(
+      children: [
+        new Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             new Expanded(
               child: new ListView(
                 itemExtent: 240.0,
                 children: <Widget>[
-                  new Container(
-                    color: Colors.white,
-                    height: 200.0,
-                    child: _buildFutureCarousel(context, 146),
+                  new Padding(
+                    padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                    child: new Container(
+                      color: Colors.white,
+                      height: 200.0,
+                      child: _buildFutureCarousel(context, 146),
 
-                    /*Carousel(
+                      /*Carousel(
 
-                        boxFit: BoxFit.fitHeight,
-                        images: [
-                        ],
-                      )*/
+                          boxFit: BoxFit.fitHeight,
+                          images: [
+                          ],
+                        )*/
+                    ),
                   ),
-                  _buildFutureLoader(context, 146, 'Copii mici'),
                   _buildFutureLoader(context, 94, 'Jocuri de constructie'),
                   _buildFutureLoader(context, 96, 'Creativitate'),
                   _buildFutureLoader(context, 99, 'Instrumente muzicale'),
@@ -388,38 +439,33 @@ class MainPage extends StatelessWidget {
             ),
           ],
         ),
-          new Container(
-            child: new Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0
-
-              ),
-              child: new TextField(
-                maxLines: 1,
-                style: TextStyle(
-                  color: Colors.black
-
-                ),
-
-                keyboardType: TextInputType.text,
-                onSubmitted: (newValue) => goToCategorySearch(context, newValue),
-
-                decoration: new InputDecoration(
+        new Container(
+          child: new Padding(
+            padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0),
+            child: new TextField(
+              maxLines: 1,
+              style: TextStyle(color: Colors.black),
+              keyboardType: TextInputType.text,
+              onSubmitted: (newValue) =>
+                  goToCategorySearch(context, newValue),
+              decoration: new InputDecoration(
+                  contentPadding:
+                  const EdgeInsets.fromLTRB(4.0, 6.0, 4.0, 4.0),
                   prefixIcon: new Icon(Icons.search),
                   filled: true,
-                    fillColor: Colors.white70,
-                    isDense: true,
-
-                    border:  new OutlineInputBorder(
-                      borderRadius: BorderRadius.zero,
-              ),
-                    hintText: 'Cauta produse'
-                ),
-              ),
+                  fillColor: Colors.black12,
+                  isDense: true,
+                  border: new OutlineInputBorder(
+                    gapPadding: 4.0,
+                    borderRadius: const BorderRadius.all(
+                      const Radius.circular(8.0),
+                    ),
+                  ),
+                  hintText: 'Cauta produse'),
             ),
-
           ),
+        ),
       ],
-      ),
-    );
-  }
-}
+    ),
+  );
+}}
