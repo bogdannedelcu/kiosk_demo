@@ -444,7 +444,7 @@ Widget build(BuildContext context) {
             padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0),
             child: new TextField(
               maxLines: 1,
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               keyboardType: TextInputType.text,
               onSubmitted: (newValue) =>
                   goToCategorySearch(context, newValue),
