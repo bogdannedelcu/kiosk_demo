@@ -402,8 +402,8 @@ _buildFutureLoader(BuildContext context, int i, String name) {
 
 @override
 Widget build(BuildContext context) {
-  return new Material(
-    child: new Stack(
+  return new Scaffold(
+    body: new Stack(
       children: [
         new Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -442,30 +442,33 @@ Widget build(BuildContext context) {
         new Container(
           child: new Padding(
             padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0),
-            child: new TextField(
-              maxLines: 1,
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-              keyboardType: TextInputType.text,
-              onSubmitted: (newValue) =>
-                  goToCategorySearch(context, newValue),
-              decoration: new InputDecoration(
-                  contentPadding:
-                  const EdgeInsets.fromLTRB(4.0, 6.0, 4.0, 4.0),
-                  prefixIcon: new Icon(Icons.search),
-                  filled: true,
-                  fillColor: Colors.black12,
-                  isDense: true,
-                  border: new OutlineInputBorder(
-                    gapPadding: 4.0,
-                    borderRadius: const BorderRadius.all(
-                      const Radius.circular(8.0),
-                    ),
-                  ),
-                  hintText: 'Cauta produse'),
+            child: new Card(
+              elevation: 4.0,
+              child: new TextField(
+                maxLines: 1,
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                keyboardType: TextInputType.text,
+                onSubmitted: (newValue) =>
+                    goToCategorySearch(context, newValue),
+                decoration: new InputDecoration(
+                    prefixIcon: new Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white70,
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: 'Cauta produse'),
+              ),
             ),
           ),
         ),
       ],
+    ),
+    bottomNavigationBar: new BottomNavigationBar( items: [
+      new BottomNavigationBarItem(icon: new Icon(Icons.search, color: Colors.black), title: new Text('Start', style: new TextStyle(color: Colors.black),)),
+      new BottomNavigationBarItem(icon: new Icon(Icons.shopping_basket, color: Colors.black), title: new Text('Cos', style: new TextStyle(color: Colors.black))),
+      new BottomNavigationBarItem(icon: new Icon(Icons.account_circle, color: Colors.black), title: new Text('Profil', style: new TextStyle(color: Colors.black))),
+    ],
+      onTap: (i) => print(i),
     ),
   );
 }}
