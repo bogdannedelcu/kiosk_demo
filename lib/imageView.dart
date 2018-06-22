@@ -33,7 +33,7 @@ class ImageView extends StatelessWidget {
           child: new Hero(
             tag: _image,
             child: new Image(
-              image: new AdvancedNetworkImage(_image),
+              image: new NetworkImage(_image),
             ),
           ),
         ));
