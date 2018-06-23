@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:kiosk/mainpage.dart';
 import 'package:kiosk/product.dart';
 import 'package:kiosk/lastSeen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartPage extends StatelessWidget {
 
