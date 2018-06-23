@@ -468,7 +468,16 @@ Widget build(BuildContext context) {
       new BottomNavigationBarItem(icon: new Icon(Icons.shopping_basket, color: Colors.black), title: new Text('Cos', style: new TextStyle(color: Colors.black))),
       new BottomNavigationBarItem(icon: new Icon(Icons.account_circle, color: Colors.black), title: new Text('Profil', style: new TextStyle(color: Colors.black))),
     ],
-      onTap: (i) => print(i),
+      onTap: (i) {
+        if (i ==1)
+          {
+            Navigator.push(
+              context,
+              new MaterialPageRoute(builder: (context) => new CartPage()),
+            );
+
+          }
+      },
     ),
   );
 }}

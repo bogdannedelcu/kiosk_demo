@@ -26,7 +26,9 @@ class ProductInfo {
 
   final double price;
 
-  ProductInfo({this.id, this.name, this.description, this.image, this.price, this.sku});
+  double qty = 0.0;
+
+  ProductInfo({this.id, this.name, this.description, this.image, this.price, this.sku, this.qty});
 }
 
 class ProductPage extends StatefulWidget {
@@ -139,7 +141,11 @@ class ProductItemState extends State<ProductPage> {
           elevation: 0.0,
           backgroundColor: Colors.white,
         ),
-        body: createWidget(context, values),
+        body: new Builder(
+          builder: (BuildContext context) {
+            return createWidget(context, values);
+          }
+        ),
       );
     }
 
@@ -254,7 +260,19 @@ class ProductItemState extends State<ProductPage> {
                   padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: new FlatButton(
                       padding: EdgeInsets.zero,
-                      onPressed: () {},
+                      onPressed: () {
+
+                        final snackBar = SnackBar(
+                            content: Row(
+                              mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children:[ new Text('Produsul a fost adugat in cos!')]));
+
+                        LastOrder.push(values);
+
+                        Scaffold.of(context).showSnackBar(snackBar);
+                        },
                       color: Colors.indigo,
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.center,
