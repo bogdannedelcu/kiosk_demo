@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:kiosk/cart.dart';
 import 'package:kiosk/product.dart';
 import 'package:kiosk/productCard.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class MainPage extends StatelessWidget {
@@ -26,7 +25,6 @@ class MainPage extends StatelessWidget {
   final String title;
 
   goToCategory(BuildContext context, int i) async {
-
     Navigator.push(
       context,
       new MaterialPageRoute(builder: (context) => new CategoryPage(i)),
@@ -94,7 +92,6 @@ class MainPage extends StatelessWidget {
       } catch (exception) {
         print(exception.toString());
       }
-
     }
 
     data.forEach((key, value) {
@@ -111,7 +108,6 @@ class MainPage extends StatelessWidget {
         image: value['image_url'],
         price: _price,
         sku: value['sku'],
-
       );
       emptyList2.add(item);
     });
@@ -122,320 +118,329 @@ class MainPage extends StatelessWidget {
     );
   }
 
-
-_buildCategoryCard(int i) async {
-  //var url = "https://www.handsoneducation.ro/api/rest/products";
-  var data;
-  final String url =
-      'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
-  var httpClient = new HttpClient();
-
-//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
-  httpClient.badCertificateCallback =
-      (X509Certificate cert, String host, int port) => true;
-  try {
-    // Make the call
-    var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
-    request.headers.add('Accept', 'application/json');
-    var response = await request.close();
-    if (response.statusCode == HttpStatus.OK) {
-      var json = await response.transform(UTF8.decoder).join();
-      // Decode the json response
-      data = JSON.decode(json);
-      // Get the result list
-
-      // Print the results.
-      print('A:' + response.toString());
-    } else {
-      print('B:' + response.toString());
-    }
-  } catch (exception) {
-    print(exception.toString());
-  }
-  var emptyList2 = List<ProductInfo>();
-
-  data.forEach((key, value) {
-    print(key);
-    print(value['name']);
-    double _price = 0.0;
-    if (value['final_price_with_tax'] != null)
-      _price = value['final_price_with_tax'].toDouble();
-
-    var item = new ProductInfo(
-      id: int.parse(value['entity_id']),
-      name: value['name'],
-      description: value['description'],
-      image: value['image_url'],
-      price: _price,
-      sku: value['sku'],
-
-    );
-    emptyList2.add(item);
-  });
-
-  return new Container(
-      height: 190.0,
-      child: new ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: emptyList2.length > 8 ? 8 : emptyList2.length,
-          itemBuilder: emptyList2.isEmpty
-              ? (BuildContext context, int i) => new Text('empty')
-              : (BuildContext context, int i) {
-            return new GestureDetector(
-                onTap: () =>
-                    _launchProduct(
-                        context,
-                        emptyList2
-                            .elementAt(i)
-                            .id,
-                        emptyList2.elementAt(i)),
-                child: new ProductCard(emptyList2.elementAt(i)));
-          }));
-}
-
-_launchProduct(context, int id, ProductInfo info) {
-  print(id);
-  Navigator.push(
-    context,
-    new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
-  );
-}
-
-_buildCategoryList(BuildContext context, int i) async {
-  //var url = "https://www.handsoneducation.ro/api/rest/products";
-  var data;
-  final String url =
-      'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
-  var httpClient = new HttpClient();
+  _buildCategoryCard(int i) async {
+    //var url = "https://www.handsoneducation.ro/api/rest/products";
+    var data;
+    final String url =
+        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+    var httpClient = new HttpClient();
 
 //    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
-  httpClient.badCertificateCallback =
-      (X509Certificate cert, String host, int port) => true;
-  try {
-    // Make the call
-    var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
-    request.headers.add('Accept', 'application/json');
-    var response = await request.close();
-    if (response.statusCode == HttpStatus.OK) {
-      var json = await response.transform(UTF8.decoder).join();
-      // Decode the json response
-      data = JSON.decode(json);
-      // Get the result list
+    httpClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    try {
+      // Make the call
+      var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
+      request.headers.add('Accept', 'application/json');
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(UTF8.decoder).join();
+        // Decode the json response
+        data = JSON.decode(json);
+        // Get the result list
 
-      // Print the results.
-      print('A:' + response.toString());
-    } else {
-      print('B:' + response.toString());
+        // Print the results.
+        print('A:' + response.toString());
+      } else {
+        print('B:' + response.toString());
+      }
+    } catch (exception) {
+      print(exception.toString());
     }
-  } catch (exception) {
-    print(exception.toString());
+    var emptyList2 = List<ProductInfo>();
+
+    data.forEach((key, value) {
+      print(key);
+      print(value['name']);
+      double _price = 0.0;
+      if (value['final_price_with_tax'] != null)
+        _price = value['final_price_with_tax'].toDouble();
+
+      var item = new ProductInfo(
+        id: int.parse(value['entity_id']),
+        name: value['name'],
+        description: value['description'],
+        image: value['image_url'],
+        price: _price,
+        sku: value['sku'],
+      );
+      emptyList2.add(item);
+    });
+
+    return new Container(
+        height: 190.0,
+        child: new ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: emptyList2.length > 8 ? 8 : emptyList2.length,
+            itemBuilder: emptyList2.isEmpty
+                ? (BuildContext context, int i) => new Text('empty')
+                : (BuildContext context, int i) {
+                    return new GestureDetector(
+                        onTap: () => _launchProduct(
+                            context,
+                            emptyList2.elementAt(i).id,
+                            emptyList2.elementAt(i)),
+                        child: new ProductCard(emptyList2.elementAt(i)));
+                  }));
   }
-  var emptyList2 = List<ProductInfo>();
 
-  data.forEach((key, value) {
-    print(key);
-    print(value['name']);
-    double _price = 0.0;
-    if (value['final_price_with_tax'] != null)
-      _price = value['final_price_with_tax'].toDouble();
-
-    var item = new ProductInfo(
-      id: int.parse(value['entity_id']),
-      name: value['name'],
-      description: value['description'],
-      image: value['image_url'],
-      price: _price,
-      sku: value['sku'],
-
+  _launchProduct(context, int id, ProductInfo info) {
+    print(id);
+    Navigator.push(
+      context,
+      new MaterialPageRoute(builder: (context) => new ProductPage(id, info)),
     );
-    emptyList2.add(item);
-  });
+  }
 
-  return new CarouselSlider(
-    items: emptyList2.map((item) {
-      return new GestureDetector(
-        onTap: () {
-          _launchProduct(context, item.id, item);
-        },
-        child: new Stack(
-          alignment: AlignmentDirectional.bottomCenter,
-          children: [
-            new Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
-              child: new Hero(
-                tag: item.image,
-                child: new Container(
-                  margin: new EdgeInsets.symmetric(horizontal: 0.0),
-                  decoration: new BoxDecoration(
-                      borderRadius:
-                      new BorderRadius.all(new Radius.circular(0.0)),
-                      image: new DecorationImage(
-                          image: new NetworkImage(item.image),
-                          fit: BoxFit.fitHeight)),
+  _buildCategoryList(BuildContext context, int i) async {
+    //var url = "https://www.handsoneducation.ro/api/rest/products";
+    var data;
+    final String url =
+        'https://www.handsoneducation.ro/api/rest/products?limit=40&category_id=';
+    var httpClient = new HttpClient();
+
+//    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
+    httpClient.badCertificateCallback =
+        (X509Certificate cert, String host, int port) => true;
+    try {
+      // Make the call
+      var request = await httpClient.getUrl(Uri.parse(url + i.toString()));
+      request.headers.add('Accept', 'application/json');
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(UTF8.decoder).join();
+        // Decode the json response
+        data = JSON.decode(json);
+        // Get the result list
+
+        // Print the results.
+        print('A:' + response.toString());
+      } else {
+        print('B:' + response.toString());
+      }
+    } catch (exception) {
+      print(exception.toString());
+    }
+    var emptyList2 = List<ProductInfo>();
+
+    data.forEach((key, value) {
+      print(key);
+      print(value['name']);
+      double _price = 0.0;
+      if (value['final_price_with_tax'] != null)
+        _price = value['final_price_with_tax'].toDouble();
+
+      var item = new ProductInfo(
+        id: int.parse(value['entity_id']),
+        name: value['name'],
+        description: value['description'],
+        image: value['image_url'],
+        price: _price,
+        sku: value['sku'],
+      );
+      emptyList2.add(item);
+    });
+
+    return new CarouselSlider(
+      items: emptyList2.map((item) {
+        return new GestureDetector(
+          onTap: () {
+            _launchProduct(context, item.id, item);
+          },
+          child: new Stack(
+            alignment: AlignmentDirectional.bottomCenter,
+            children: [
+              new Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
+                child: new Hero(
+                  tag: item.image,
+                  child: new Container(
+                    margin: new EdgeInsets.symmetric(horizontal: 0.0),
+                    decoration: new BoxDecoration(
+                        borderRadius:
+                            new BorderRadius.all(new Radius.circular(0.0)),
+                        image: new DecorationImage(
+                            image: new NetworkImage(item.image),
+                            fit: BoxFit.fitHeight)),
+                  ),
                 ),
               ),
-            ),
-            new Text(item.name, style: new TextStyle(fontSize: 16.0),),
-          ],
-        ),
-      );
-    }).toList(),
-    viewportFraction: 1.0,
-    aspectRatio: 1.0,
-    autoPlay: true,
-
-  );
-}
-
-_buildFutureCarousel(BuildContext context, int i) {
-  return new FutureBuilder<dynamic>(
-    future: _buildCategoryList(context, i), // a Future<String> or null
-    builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-      switch (snapshot.connectionState) {
-        case ConnectionState.none:
-          return new Text('no network');
-        case ConnectionState.waiting:
-          return new Text('...');
-        default:
-          if (snapshot.hasError)
-            return new Text('Error: ${snapshot.error}');
-          else
-            return snapshot.data;
-      }
-    },
-  );
-}
-
-_buildFutureLoader(BuildContext context, int i, String name) {
-  return new Column(
-    children: <Widget>[
-      new Container(
-        height: 10.0,
-      ),
-      new GestureDetector(
-        onTap: () {
-          goToCategory(context, i);
-        },
-        child: new Container(
-            child: new Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: new Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  new Text(
-                    name,
-                    style: new TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14.0),
-                  ),
-                  new Expanded(
-                      child: new Text('Toate >  ',
-                          textAlign: TextAlign.right,
-                          style: new TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 14.0))),
-                ],
+              new Text(
+                item.name,
+                style: new TextStyle(fontSize: 16.0),
               ),
-            )),
-      ),
-      new FutureBuilder<dynamic>(
-        future: _buildCategoryCard(i), // a Future<String> or null
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return new Text('no network');
-            case ConnectionState.waiting:
-              return new Text('...');
-            default:
-              if (snapshot.hasError)
-                return new Text('Error: ${snapshot.error}');
-              else
-                return snapshot.data;
-          }
-        },
-      ),
-    ],
-  );
-}
+            ],
+          ),
+        );
+      }).toList(),
+      viewportFraction: 1.0,
+      aspectRatio: 1.0,
+      autoPlay: true,
+    );
+  }
 
-@override
-Widget build(BuildContext context) {
-  return new Scaffold(
-    body: new Stack(
-      children: [
-        new Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            new Expanded(
-              child: new ListView(
-                itemExtent: 230.0,
-                children: <Widget>[
-                  new Padding(
-                    padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                    child: new Container(
-                      color: Colors.white,
-                      height: 200.0,
-                      child: _buildFutureCarousel(context, 146),
+  _buildFutureCarousel(BuildContext context, int i) {
+    return new FutureBuilder<dynamic>(
+      future: _buildCategoryList(context, i), // a Future<String> or null
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return new Text('no network');
+          case ConnectionState.waiting:
+            return new Text('...');
+          default:
+            if (snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            else
+              return snapshot.data;
+        }
+      },
+    );
+  }
 
-                      /*Carousel(
+  _buildFutureLoader(BuildContext context, int i, String name) {
+    return new Column(
+      children: <Widget>[
+        new Container(
+          height: 10.0,
+        ),
+        new GestureDetector(
+          onTap: () {
+            goToCategory(context, i);
+          },
+          child: new Container(
+              child: new Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: new Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                new Text(
+                  name,
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14.0),
+                ),
+                new Expanded(
+                    child: new Text('Toate >  ',
+                        textAlign: TextAlign.right,
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14.0))),
+              ],
+            ),
+          )),
+        ),
+        new FutureBuilder<dynamic>(
+          future: _buildCategoryCard(i), // a Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                return new Text('no network');
+              case ConnectionState.waiting:
+                return new Text('...');
+              default:
+                if (snapshot.hasError)
+                  return new Text('Error: ${snapshot.error}');
+                else
+                  return snapshot.data;
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Stack(
+        children: [
+          new Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              new Expanded(
+                child: new ListView(
+                  itemExtent: 230.0,
+                  children: <Widget>[
+                    new Padding(
+                      padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                      child: new Container(
+                        color: Colors.white,
+                        height: 200.0,
+                        child: _buildFutureCarousel(context, 146),
+
+                        /*Carousel(
 
                           boxFit: BoxFit.fitHeight,
                           images: [
                           ],
                         )*/
+                      ),
                     ),
-                  ),
-                  _buildFutureLoader(context, 102, 'Pentru bebelusi'),
-                  _buildFutureLoader(context, 99, 'Instrumente muzicale'),
-                  _buildFutureLoader(context, 105, 'Joc de rol'),
-                  _buildFutureLoader(context, 96, 'Creativitate'),
-                  _buildFutureLoader(context, 94, 'Jocuri de constructie'),
-                  _buildFutureLoader(context, 110, 'Puzzle'),
-                  _buildFutureLoader(context, 125, 'Carti'),
-                ],
+                    _buildFutureLoader(context, 102, 'Pentru bebelusi'),
+                    _buildFutureLoader(context, 99, 'Instrumente muzicale'),
+                    _buildFutureLoader(context, 105, 'Joc de rol'),
+                    _buildFutureLoader(context, 96, 'Creativitate'),
+                    _buildFutureLoader(context, 94, 'Jocuri de constructie'),
+                    _buildFutureLoader(context, 110, 'Puzzle'),
+                    _buildFutureLoader(context, 125, 'Carti'),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        new Container(
-          child: new Padding(
-            padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0),
-            child: new Card(
-              color: Colors.white70,
-              elevation: 4.0,
-              child: new TextField(
-                maxLines: 1,
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                keyboardType: TextInputType.text,
-                onSubmitted: (newValue) =>
-                    goToCategorySearch(context, newValue),
-                decoration: new InputDecoration(
-                    prefixIcon: new Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white70,
-                    isDense: true,
-                    border: InputBorder.none,
-                    hintText: 'Cauta produse'),
+            ],
+          ),
+          new Container(
+            child: new Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0),
+              child: new Card(
+                color: Colors.white70,
+                elevation: 4.0,
+                child: new TextField(
+                  maxLines: 1,
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                  keyboardType: TextInputType.text,
+                  onSubmitted: (newValue) =>
+                      goToCategorySearch(context, newValue),
+                  decoration: new InputDecoration(
+                      prefixIcon: new Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.white70,
+                      isDense: true,
+                      border: InputBorder.none,
+                      hintText: 'Cauta produse'),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-    bottomNavigationBar: new BottomNavigationBar( items: [
-      new BottomNavigationBarItem(icon: new Icon(Icons.search, color: Colors.black), title: new Text('Start', style: new TextStyle(color: Colors.black),)),
-      new BottomNavigationBarItem(icon: new Icon(Icons.shopping_basket, color: Colors.black), title: new Text('Cos', style: new TextStyle(color: Colors.black))),
-      new BottomNavigationBarItem(icon: new Icon(Icons.account_circle, color: Colors.black), title: new Text('Profil', style: new TextStyle(color: Colors.black))),
-    ],
-      onTap: (i) {
-        if (i ==1)
-          {
+        ],
+      ),
+      bottomNavigationBar: new BottomNavigationBar(
+        items: [
+          new BottomNavigationBarItem(
+              icon: new Icon(Icons.search, color: Colors.black),
+              title: new Text(
+                'Start',
+                style: new TextStyle(color: Colors.black),
+              )),
+          new BottomNavigationBarItem(
+              icon: new Icon(Icons.shopping_basket, color: Colors.black),
+              title:
+                  new Text('Cos', style: new TextStyle(color: Colors.black))),
+          new BottomNavigationBarItem(
+              icon: new Icon(Icons.account_circle, color: Colors.black),
+              title: new Text('Profil',
+                  style: new TextStyle(color: Colors.black))),
+        ],
+        onTap: (i) {
+          if (i == 1) {
             Navigator.push(
               context,
               new MaterialPageRoute(builder: (context) => new CartPage()),
             );
-
           }
-      },
-    ),
-  );
-}}
+        },
+      ),
+    );
+  }
+}

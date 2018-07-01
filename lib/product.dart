@@ -12,6 +12,7 @@ import 'package:kiosk/imageView.dart';
 import 'package:kiosk/productCard.dart';
 import 'package:kiosk/utils.dart';
 import 'package:zoomable_image/zoomable_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class ProductInfo {
   final int id;
@@ -28,14 +29,23 @@ class ProductInfo {
 
   double qty = 0.0;
 
-  ProductInfo({this.id, this.name, this.description, this.image, this.price, this.sku, this.qty});
+  final List<String> images = new List<String>();
+
+  ProductInfo(
+      {this.id,
+      this.name,
+      this.description,
+      this.image,
+      this.price,
+      this.sku,
+      this.qty});
 }
 
 class ProductPage extends StatefulWidget {
   final int _id;
   final ProductInfo _info;
 
-  ProductPage(this._id, this._info);
+  ProductPage(this._id, Null);
 
   @override
   ProductItemState createState() {
@@ -45,7 +55,7 @@ class ProductPage extends StatefulWidget {
   Future<ProductInfo> _getData(int id) async {
     //var url = "https://www.handsoneducation.ro/api/rest/products";
     var data;
-    final String url = 'https://www.handsoneducation.ro/api/rest/products/';
+    String url = 'https://www.handsoneducation.ro/api/rest/products/';
     var httpClient = new HttpClient();
 //       httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
     httpClient.badCertificateCallback =
@@ -79,6 +89,36 @@ class ProductPage extends StatefulWidget {
       sku: data['sku'],
     );
 
+    debugPrint(prod.toString());
+
+    try {
+      // Make the call
+      var request =
+          await httpClient.getUrl(Uri.parse(url + id.toString() + '/images'));
+      request.headers.add('Accept', 'application/json');
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(UTF8.decoder).join();
+        // Decode the json response
+        data = JSON.decode(json);
+        // Get the result list
+
+        // Print the results.
+        print('A:' + data.toString());
+
+        prod.images.add(prod.image);
+
+        data.forEach((value) {
+          print('Image:   ' + value['url'].toString());
+
+          if (value['url'] != prod.image) prod.images.add(value['url']);
+        });
+      } else {
+        print('B:' + data.toString());
+      }
+    } catch (exception) {
+      print(exception.toString());
+    }
 
     return prod;
   }
@@ -121,7 +161,6 @@ class ProductItemState extends State<ProductPage> {
         },
       );
 
-
       return new Scaffold(
         backgroundColor: Colors.white,
         appBar: new AppBar(
@@ -132,8 +171,6 @@ class ProductItemState extends State<ProductPage> {
         body: futureBuilder,
       );
     } else {
-
-
       return new Scaffold(
         backgroundColor: Colors.white,
         appBar: new AppBar(
@@ -141,16 +178,11 @@ class ProductItemState extends State<ProductPage> {
           elevation: 0.0,
           backgroundColor: Colors.white,
         ),
-        body: new Builder(
-          builder: (BuildContext context) {
-            return createWidget(context, values);
-          }
-        ),
+        body: new Builder(builder: (BuildContext context) {
+          return createWidget(context, values);
+        }),
       );
     }
-
-
-
   }
 
   Widget createWidget(BuildContext context, ProductInfo snapshot) {
@@ -158,12 +190,58 @@ class ProductItemState extends State<ProductPage> {
 
     LastSeen.push(values);
 
-
     return new SingleChildScrollView(
       child: new Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          Container(
+            height:220.0,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: CarouselSlider(
+                    items: values.images.map((item) {
+                      return new GestureDetector(
+                        onTap: () {
+                          //_launchProduct(context, values.id, values);
+                        },
+                        child: new Stack(
+                          alignment: AlignmentDirectional.bottomCenter,
+                          children: [
+                            new Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 20.0, horizontal: 2.0),
+                              child: new Hero(
+                                tag: item,
+                                child: new Container(
+                                  margin: new EdgeInsets.symmetric(horizontal: 0.0),
+                                  decoration: new BoxDecoration(
+                                      borderRadius: new BorderRadius.all(
+                                          new Radius.circular(0.0)),
+                                      image: new DecorationImage(
+                                          image: new NetworkImage(item),
+                                          fit: BoxFit.fitHeight)),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    viewportFraction: 1.0,
+                    aspectRatio: 1.0,
+                    autoPlay: true,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+/*
           new GestureDetector(
             onTap: () {
               Navigator.push(
@@ -182,6 +260,7 @@ class ProductItemState extends State<ProductPage> {
               ),
             ),
           ),
+  */
           new Padding(
             padding: const EdgeInsets.all(8.0),
             child: new Row(
@@ -215,7 +294,6 @@ class ProductItemState extends State<ProductPage> {
                     textAlign: TextAlign.left,
                   ),
                 ),
-
                 new Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -261,18 +339,19 @@ class ProductItemState extends State<ProductPage> {
                   child: new FlatButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
-
                         final snackBar = SnackBar(
                             content: Row(
-                              mainAxisSize: MainAxisSize.max,
+                                mainAxisSize: MainAxisSize.max,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                children:[ new Text('Produsul a fost adugat in cos!')]));
+                                children: [
+                              new Text('Produsul a fost adugat in cos!')
+                            ]));
 
                         LastOrder.push(values);
 
                         Scaffold.of(context).showSnackBar(snackBar);
-                        },
+                      },
                       color: Colors.indigo,
                       child: new Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -345,21 +424,20 @@ class ProductItemState extends State<ProductPage> {
               child: new ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount:
-                  LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
+                      LastSeen.queue.length > 8 ? 8 : LastSeen.queue.length,
                   itemBuilder: LastSeen.queue.isEmpty
                       ? (BuildContext context, int i) => new Text('empty')
                       : (BuildContext context, int i) {
-                    if (i == 0) return new Container();
+                          if (i == 0) return new Container();
 
-                    return new GestureDetector(
-                        onTap: () =>
-                            _launchProduct(
-                                context, LastSeen.queue
-                                .elementAt(i)
-                                .id, LastSeen.queue.elementAt(i)),
-                        child:
-                        new ProductCard(LastSeen.queue.elementAt(i)));
-                  })),
+                          return new GestureDetector(
+                              onTap: () => _launchProduct(
+                                  context,
+                                  LastSeen.queue.elementAt(i).id,
+                                  LastSeen.queue.elementAt(i)),
+                              child:
+                                  new ProductCard(LastSeen.queue.elementAt(i)));
+                        })),
         ],
       ),
     );
@@ -370,9 +448,7 @@ class ProductItemState extends State<ProductPage> {
 //      return new Container();
 
     return new Text('Produse vizualizate recent',
-        style:
-        new TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0));
-
+        style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0));
   }
 
   _launchProduct(context, int id, ProductInfo info) {
