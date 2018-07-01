@@ -207,7 +207,11 @@ class ProductItemState extends State<ProductPage> {
                     items: values.images.map((item) {
                       return new GestureDetector(
                         onTap: () {
-                          //_launchProduct(context, values.id, values);
+                          Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new ImageView(item)),
+                          );
                         },
                         child: new Stack(
                           alignment: AlignmentDirectional.bottomCenter,
