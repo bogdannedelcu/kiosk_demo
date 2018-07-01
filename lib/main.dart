@@ -6,7 +6,7 @@ void main() => runApp(new MyApp());
 
 final ThemeData kIOSTheme = new ThemeData(
   primarySwatch: Colors.blue,
-  primaryColor: Colors.grey[100],
+  primaryColor: Colors.white,
   primaryColorBrightness: Brightness.light,
   fontFamily: 'OpenSansCondensed',
 );

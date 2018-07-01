@@ -390,56 +390,47 @@ class MainPage extends StatelessWidget {
             ],
           ),
           new Container(
-            child: new Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 30.0, 4.0, 0.0),
-              child: new Card(
-                color: Colors.white70,
-                elevation: 4.0,
-                child: new TextField(
-                  maxLines: 1,
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                  keyboardType: TextInputType.text,
-                  onSubmitted: (newValue) =>
-                      goToCategorySearch(context, newValue),
-                  decoration: new InputDecoration(
-                      prefixIcon: new Icon(Icons.search),
-                      filled: true,
-                      fillColor: Colors.white70,
-                      isDense: true,
-                      border: InputBorder.none,
-                      hintText: 'Cauta produse'),
-                ),
-              ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 24.0, 4.0, 0.0),
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    new Expanded(
+                      child: new Card(
+                        color: Color.fromRGBO(255, 255, 255, 0.8),
+                        elevation: 2.0,
+                        child: new TextField(
+                          maxLines: 1,
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                          keyboardType: TextInputType.text,
+                          onSubmitted: (newValue) =>
+                              goToCategorySearch(context, newValue),
+                          decoration: new InputDecoration(
+                              prefixIcon: new Icon(Icons.search),
+                              isDense: true,
+                              border: InputBorder.none,
+                              hintText: 'Cauta produse'),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => new CartPage()),
+                        );
+                      },
+                      icon: Icon(Icons.shopping_basket),
+
+                    )
+                  ]),
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: new BottomNavigationBar(
-        items: [
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.search, color: Colors.black),
-              title: new Text(
-                'Start',
-                style: new TextStyle(color: Colors.black),
-              )),
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.shopping_basket, color: Colors.black),
-              title:
-                  new Text('Cos', style: new TextStyle(color: Colors.black))),
-          new BottomNavigationBarItem(
-              icon: new Icon(Icons.account_circle, color: Colors.black),
-              title: new Text('Profil',
-                  style: new TextStyle(color: Colors.black))),
-        ],
-        onTap: (i) {
-          if (i == 1) {
-            Navigator.push(
-              context,
-              new MaterialPageRoute(builder: (context) => new CartPage()),
-            );
-          }
-        },
       ),
     );
   }

@@ -11,7 +11,6 @@ import 'package:kiosk/lastSeen.dart';
 import 'package:zoomable_image/zoomable_image.dart';
 
 class ImageView extends StatelessWidget {
-
   final String _image;
 
   ImageView(this._image);
@@ -19,23 +18,38 @@ class ImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new Container(
-        color: Colors.white,
-        child: new ZoomableWidget(
-          enableZoom: true,
-          minScale: 0.3,
-          maxScale: 2.0,
-          tapCallback: () {
-            Navigator.pop(context, null);
-          },
-
-          enablePan: true,
-          child: new Hero(
-            tag: _image,
-            child: new Image(
-              image: new NetworkImage(_image),
+    return Stack(children: [
+      new Container(
+          color: Colors.white,
+          child: new ZoomableWidget(
+            enableZoom: true,
+            minScale: 0.3,
+            maxScale: 2.0,
+            tapCallback: () {
+              Navigator.pop(context, null);
+            },
+            enablePan: true,
+            child: new Hero(
+              tag: _image,
+              child: new Image(
+                image: new NetworkImage(_image),
+              ),
             ),
+          )),
+      Padding(
+        padding: const EdgeInsets.only(top: 30.0),
+        child: Align(
+          alignment: Alignment.topRight,
+          child: new FlatButton(
+
+            onPressed: (){
+              Navigator.pop(context, null);
+
+            },
+            child: Icon(Icons.clear),
           ),
-        ));
+        ),
+      )
+    ]);
   }
 }

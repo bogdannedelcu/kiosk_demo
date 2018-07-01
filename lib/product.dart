@@ -11,6 +11,7 @@ import 'package:kiosk/lastSeen.dart';
 import 'package:kiosk/imageView.dart';
 import 'package:kiosk/productCard.dart';
 import 'package:kiosk/utils.dart';
+import 'package:kiosk/cart.dart';
 import 'package:zoomable_image/zoomable_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -84,14 +85,15 @@ class ProductPage extends StatefulWidget {
       name: data['name'],
       description: data['description'],
       image: data['image_url'],
-      price: data['final_price_with_tax'],
-      id: int.parse(data['entity_id']),
+      price: double.tryParse(data['final_price_with_tax'].toString()),
+      id: int.tryParse(data['entity_id'].toString()),
       sku: data['sku'],
     );
 
     debugPrint(prod.toString());
 
     prod.images.clear();
+    prod.images.add(prod.image);
 
     try {
       // Make the call
@@ -108,7 +110,6 @@ class ProductPage extends StatefulWidget {
         // Print the results.
         print('A:' + data.toString());
 
-        prod.images.add(prod.image);
 
         data.forEach((value) {
           print('Image:   ' + value['url'].toString());
@@ -169,6 +170,21 @@ class ProductItemState extends State<ProductPage> {
           title: new Text("informatii produs"),
           elevation: 0.0,
           backgroundColor: Colors.transparent,
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new CartPage()),
+                );
+              },
+              icon: Icon(Icons.shopping_basket),
+
+            )
+
+          ],
+
         ),
         body: futureBuilder,
       );
@@ -179,6 +195,20 @@ class ProductItemState extends State<ProductPage> {
           title: new Text("informatii produs"),
           elevation: 0.0,
           backgroundColor: Colors.white,
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new CartPage()),
+                );
+              },
+              icon: Icon(Icons.shopping_basket),
+
+            )
+
+          ],
         ),
         body: new Builder(builder: (BuildContext context) {
           return createWidget(context, values);
