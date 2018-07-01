@@ -91,6 +91,8 @@ class ProductPage extends StatefulWidget {
 
     debugPrint(prod.toString());
 
+    prod.images.clear();
+
     try {
       // Make the call
       var request =
