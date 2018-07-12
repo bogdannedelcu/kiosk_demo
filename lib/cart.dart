@@ -91,13 +91,22 @@ class CartPage extends StatelessWidget {
       backgroundColor: Colors.white,
       body: new ListView.builder(
         itemBuilder: (BuildContext context, int index) {
-          return new ListTile(
-            title: new Text(LastOrder.queue.elementAt(index).name),
-            trailing: new Text(LastOrder.queue.elementAt(index).price.toString()),
-            leading: new SizedBox(
-              child: Image.network(LastOrder.queue.elementAt(index).image),
-              height: 40.0,
-            width: 40.0,),
+          final item = LastOrder.queue.elementAt(index);
+          return new Dismissible(
+            key: new Key(item.name),
+            direction: DismissDirection.horizontal,
+            onDismissed: (DismissDirection dir) {
+              LastOrder.queue.remove(item);
+
+            },
+            child: new ListTile(
+              title: new Text(LastOrder.queue.elementAt(index).name),
+              trailing: new Text(LastOrder.queue.elementAt(index).price.toString()),
+              leading: new SizedBox(
+                child: Image.network(LastOrder.queue.elementAt(index).image),
+                height: 40.0,
+              width: 40.0,),
+            ),
           );
         },
         itemCount: LastOrder.queue.length,
