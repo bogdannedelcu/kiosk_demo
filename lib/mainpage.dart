@@ -39,7 +39,7 @@ class MainPage extends StatelessWidget {
             i.toString() +
             '%25';
     var httpClient = new HttpClient();
-    var json = '';
+    var jsonul = '';
 //    httpClient.findProxy = (Uri uri) => "PROXY 192.168.1.171:8888;";
     httpClient.badCertificateCallback =
         (X509Certificate cert, String host, int port) => true;
@@ -49,9 +49,9 @@ class MainPage extends StatelessWidget {
       request.headers.add('Accept', 'application/json');
       var response = await request.close();
       if (response.statusCode == HttpStatus.OK) {
-        json = await response.transform(UTF8.decoder).join();
+        var jsonul = await response.transform(utf8.decoder).join();
         // Decode the json response
-        data = JSON.decode(json);
+        data = json.decode(jsonul);
         // Get the result list
 
         // Print the results.
@@ -79,9 +79,9 @@ class MainPage extends StatelessWidget {
         request.headers.add('Accept', 'application/json');
         var response = await request.close();
         if (response.statusCode == HttpStatus.OK) {
-          var json = await response.transform(UTF8.decoder).join();
+          var jsonul = await response.transform(utf8.decoder).join();
           // Decode the json response
-          data = JSON.decode(json);
+          data = json.decode(jsonul);
           // Get the result list
 
           // Print the results.
@@ -134,9 +134,9 @@ class MainPage extends StatelessWidget {
       request.headers.add('Accept', 'application/json');
       var response = await request.close();
       if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(UTF8.decoder).join();
+        var jsonul = await response.transform(utf8.decoder).join();
         // Decode the json response
-        data = JSON.decode(json);
+        data = json.decode(jsonul);
         // Get the result list
 
         // Print the results.
@@ -208,9 +208,9 @@ class MainPage extends StatelessWidget {
       request.headers.add('Accept', 'application/json');
       var response = await request.close();
       if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(UTF8.decoder).join();
+        var jsonul = await response.transform(utf8.decoder).join();
         // Decode the json response
-        data = JSON.decode(json);
+        data = json.decode(jsonul);
         // Get the result list
 
         // Print the results.

@@ -25,10 +25,9 @@ class ImageView extends StatelessWidget {
             enableZoom: true,
             minScale: 0.3,
             maxScale: 2.0,
-            tapCallback: () {
+            onTap: () {
               Navigator.pop(context, null);
             },
-            enablePan: true,
             child: new Hero(
               tag: _image,
               child: new Image(

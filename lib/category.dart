@@ -154,9 +154,9 @@ class CategoryPage extends StatefulWidget {
       request.headers.add('Accept', 'application/json');
       var response = await request.close();
       if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(UTF8.decoder).join();
+        var jsonul = await response.transform(utf8.decoder).join();
         // Decode the json response
-        jsonData = JSON.decode(json);
+        jsonData = json.decode(jsonul);
         // Get the result list
 
         // Print the results.
