@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kiosk/category.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';

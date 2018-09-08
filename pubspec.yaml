@@ -4,7 +4,6 @@ description: A new Flutter application.
 dependencies:
   flutter:
     sdk: flutter
-  image_picker:
   http:
   flutter_advanced_networkimage: any
   cloud_firestore: ^0.7.2
