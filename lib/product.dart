@@ -69,7 +69,7 @@ class ProductPage extends StatefulWidget {
       if (response.statusCode == HttpStatus.OK) {
         var jsonul = await response.transform(utf8.decoder).join();
         // Decode the json response
-        data = json..decode(jsonul);
+        data = json.decode(jsonul);
         // Get the result list
 
         // Print the results.
@@ -236,6 +236,7 @@ class ProductItemState extends State<ProductPage> {
               children: <Widget>[
                 Expanded(
                   child: CarouselSlider(
+
                     items: values.images.map((item) {
                       return new GestureDetector(
                         onTap: () {
@@ -270,7 +271,7 @@ class ProductItemState extends State<ProductPage> {
                     }).toList(),
                     viewportFraction: 1.0,
                     aspectRatio: 1.0,
-                    autoPlay: true,
+                    autoPlay: false,
                   ),
                 ),
               ],
